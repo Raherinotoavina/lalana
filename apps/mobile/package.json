@@ -76,6 +76,7 @@
     ],
     "coverageReporters": [
       "text-summary",
+      "json-summary",
       "lcov"
     ],
     "coverageThreshold": {

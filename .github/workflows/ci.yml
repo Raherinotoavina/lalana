@@ -1,9 +1,12 @@
 name: CI
 
+# Runs on every pull request, on main, and on demand. A pull request may be merged only
+# when the "CI OK" job is green: it fails if any check below fails or is skipped.
 on:
   pull_request:
   push:
     branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -14,7 +17,7 @@ permissions:
 
 jobs:
   mobile:
-    name: Mobile (lint, typecheck, tests ≥ 80 %)
+    name: Mobile
     runs-on: ubuntu-latest
     timeout-minutes: 15
     defaults:
@@ -27,15 +30,59 @@ jobs:
           node-version: 24
           cache: npm
           cache-dependency-path: apps/mobile/package-lock.json
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm run format:check
-      # Fails below 80 % statements, branches, functions or lines (threshold in package.json).
-      - run: npm run test:coverage -- --ci
-      - uses: actions/upload-artifact@v4
+      - name: Install
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Format
+        run: npm run format:check
+      # Jest itself fails below the thresholds in package.json (80 % on every metric).
+      - name: Tests with coverage
+        run: npm run test:coverage -- --ci
+      # Second, explicit gate: reads the coverage report, fails below 80 % and publishes
+      # the table in the job summary.
+      - name: Coverage gate (80 %)
+        if: always() && hashFiles('apps/mobile/coverage/coverage-summary.json') != ''
+        working-directory: .
+        run: node scripts/coverage-gate.mjs apps/mobile/coverage/coverage-summary.json Mobile 80
+      - name: Upload coverage report
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-coverage
-          path: apps/mobile/coverage/lcov-report
+          path: apps/mobile/coverage
           retention-days: 7
+          if-no-files-found: ignore
+
+  scripts:
+    name: Repository scripts
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Tests with coverage (80 %)
+        run: npm run test:scripts
+
+  ci-ok:
+    name: CI OK
+    if: always()
+    needs: [mobile, scripts]
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Every check passed
+        env:
+          RESULTS: ${{ join(needs.*.result, ' ') }}
+        run: |
+          echo "Results: $RESULTS"
+          for result in $RESULTS; do
+            if [ "$result" != "success" ]; then
+              echo "::error::A required check did not pass ($result)."
+              exit 1
+            fi
+          done
