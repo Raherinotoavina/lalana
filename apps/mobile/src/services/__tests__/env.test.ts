@@ -1,23 +1,17 @@
 import { EnvError, parsePublicEnv, readPublicEnv, type RawPublicEnv } from '../env';
 
 const VALID: RawPublicEnv = {
-  apiUrl: 'https://api.staging.lalana.example/',
-  supabaseUrl: 'https://abc.supabase.co',
-  supabaseAnonKey: ' public-anon-key ',
+  apiUrl: ' https://api.staging.lalana.example/ ',
 };
 
 describe('parsePublicEnv', () => {
   it('trims values and drops trailing slashes', () => {
-    expect(parsePublicEnv(VALID)).toEqual({
-      apiUrl: 'https://api.staging.lalana.example',
-      supabaseUrl: 'https://abc.supabase.co',
-      supabaseAnonKey: 'public-anon-key',
-    });
+    expect(parsePublicEnv(VALID)).toEqual({ apiUrl: 'https://api.staging.lalana.example' });
   });
 
-  it('names every missing variable', () => {
-    expect(() => parsePublicEnv({ ...VALID, apiUrl: undefined, supabaseAnonKey: '  ' })).toThrow(
-      'Missing environment variables: EXPO_PUBLIC_API_URL, EXPO_PUBLIC_SUPABASE_ANON_KEY',
+  it('names the missing variable', () => {
+    expect(() => parsePublicEnv({ apiUrl: '  ' })).toThrow(
+      'Missing environment variables: EXPO_PUBLIC_API_URL',
     );
   });
 
@@ -47,8 +41,6 @@ describe('readPublicEnv', () => {
 
   it('reads the EXPO_PUBLIC_ variables', () => {
     process.env.EXPO_PUBLIC_API_URL = 'http://localhost:5080';
-    process.env.EXPO_PUBLIC_SUPABASE_URL = 'https://abc.supabase.co';
-    process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY = 'anon';
     expect(readPublicEnv().apiUrl).toBe('http://localhost:5080');
   });
 });

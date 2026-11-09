@@ -13,8 +13,9 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 
 ## Conversation context and prior decisions
 
-- Stack agreed on 2026-11-09: Expo mobile app + C# / ASP.NET Core API from V1 +
-  Supabase (Postgres, Auth, Storage). See [architecture](../architecture.md).
+- Stack agreed on 2026-11-09: Expo mobile app + C# / ASP.NET Core API from V1, then
+  the same day self-hosted instead of Supabase (PostgreSQL + PostGIS, ASP.NET Core
+  Identity, photo storage, all in Docker). See [architecture](../architecture.md).
 - Palette "Nuit + Soleil": primary `#172554`, accent `#FFD23F`, ink `#111827`,
   background `#F5F4F0`, muted `#5A6070`. Font Plus Jakarta Sans. Avatars are rounded
   squares; the tab bar is a dark floating bar with a yellow "+" in the centre.
@@ -39,12 +40,14 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
   cards, chips, rounded-square avatar, segmented control, floating tab bar, icon set
   (project icon library, never emoji as icons).
 - Tab bar shell: Accueil, Réservations, Publier, Messages, Profil.
-- ESLint rule forbidding `@supabase/*` imports outside `src/services/auth*`.
+- ESLint rule keeping data access in `src/services` (first written for Supabase; since
+  2026-11-09 it forbids `@supabase/*` everywhere and the generated API client outside
+  `src/services`).
 - Jest (`jest-expo`) + React Native Testing Library, 80 % global thresholds.
 - Husky `pre-commit` (lint-staged on staged mobile and C# files) and `pre-push`
   (complete validation of both apps).
 - GitHub Actions workflow with a mobile job (lint, typecheck, tests with coverage).
-- `.env.example` listing the public variables (API URL, Supabase URL, anon key).
+- `.env.example` listing the public variables (the API URL).
 
 ## Out of scope
 
@@ -77,7 +80,8 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
   matching the board.
 - [ ] Lint, typecheck, and Jest with coverage ≥ 80 % pass locally and in CI. Local:
   passing (100 % statements, functions and lines, 91 % branches). CI: pending first run.
-- [x] Importing `@supabase/supabase-js` outside the auth service fails lint.
+- [x] Importing `@supabase/supabase-js` outside the auth service fails lint (rule
+  tightened on 2026-11-09, see Scope).
 - [x] The pre-push hook runs the complete validation suite.
 
 ## Test strategy

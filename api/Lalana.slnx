@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Lalana.Api/Lalana.Api.csproj" />
+    <Project Path="src/Lalana.Application/Lalana.Application.csproj" />
+    <Project Path="src/Lalana.Domain/Lalana.Domain.csproj" />
+    <Project Path="src/Lalana.Infrastructure/Lalana.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Lalana.Api.IntegrationTests/Lalana.Api.IntegrationTests.csproj" />
+    <Project Path="tests/Lalana.Application.Tests/Lalana.Application.Tests.csproj" />
+    <Project Path="tests/Lalana.Domain.Tests/Lalana.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

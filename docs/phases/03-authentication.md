@@ -29,7 +29,7 @@ create their profile in the API on first use.
   - Password reset in three screens: identifier → code (Mot de passe oublié — code)
     → new password (Nouveau mot de passe). The first screen never says whether an
     account exists ("Si un compte existe, vous recevrez un code"). Saving the new
-    password signs the user in (Supabase recovery session) and opens Accueil.
+    password signs the user in (the API issues new tokens) and opens Accueil.
   - Code entry is one numeric field with `autocomplete="one-time-code"`, drawn as
     six boxes, so iOS and Android can offer the received SMS code. It submits on its
     own when the sixth digit is typed; the "Vérifier" button stays for clarity.
@@ -61,12 +61,21 @@ create their profile in the API on first use.
   number. Local formats (`034 12 345 67`, `34 12 345 67`) and `+261…` are normalized
   to E.164 and Malagasy mobile prefixes are validated; anything else shows a clear
   error.
-- Supabase Auth: sign-up with the phone (SMS code, chosen SMS provider) or the
-  e-mail (e-mail code) and the password; when both are given, the e-mail is attached
-  to the same user and confirmed by its own code;
-  sign-in with either identifier and the password; reset by SMS or e-mail code,
-  Google provider (native sign-in on Android and iOS).
-- Session persistence and refresh on the device; sign-out.
+- Accounts in the API with ASP.NET Core Identity (decided 2026-11-09, replacing
+  Supabase Auth), stored in schema `app`:
+  - sign-up with the phone (SMS code) or the e-mail (e-mail code) and the password;
+    when both are given, the e-mail is confirmed later by its own code;
+  - sign-in with either identifier and the password; lockout after repeated failures;
+  - one-time codes: 6 digits, stored hashed, short expiry, limited attempts, one active
+    code per purpose, rate-limited per number, per e-mail, per device and per IP;
+  - password reset by SMS or e-mail code, with the same answer whether or not the
+    account exists;
+  - Google: native sign-in on the device, ID token verified by the API (Google's keys,
+    audience = our client ids), account created or linked;
+  - tokens: short-lived JWT access token and rotating refresh token (stored hashed,
+    revoked on sign-out, on password change and on reuse of an old refresh token).
+- SMS and e-mail behind ports (`ISmsSender`, `IEmailSender`) with a fake in tests.
+- Session persistence in `expo-secure-store`, silent refresh, sign-out.
 - API: `POST /profiles/bootstrap` (idempotent) creating the profile from the token's
   identity (phone, e-mail, or Google) and the submitted names; `GET /me` returns it.
 - Adding the missing identifier later, or changing one, from the profile settings,
@@ -83,18 +92,24 @@ create their profile in the API on first use.
 ## Dependencies
 
 - Phases 01 and 02. A Google Cloud OAuth client (Android, iOS, web). An SMS provider
-  account configured in Supabase Auth.
+  account and a transactional e-mail account (free tier), both used by the API.
 
 ## Implementation tasks
 
-- [ ] Compare SMS providers supported by Supabase Auth for +261 numbers (delivery,
-  price, fraud protection) and record the choice here.
-- [ ] Configure Supabase Auth: phone OTP, e-mail templates in French, code length,
-  Google provider, rate limits.
+- [ ] Compare SMS providers for +261 numbers (delivery on Telma/Yas, Orange and
+  Airtel, price per SMS, fraud protection) and record the choice here.
+- [ ] Choose the transactional e-mail service (free tier) and write the French
+  templates.
+- [ ] Add ASP.NET Core Identity with EF Core stores in schema `app` and its migration.
+- [ ] Implement one-time codes (hashing, expiry, attempts, rate limits) and the
+  sign-up, verification, sign-in, refresh, sign-out and reset endpoints.
+- [ ] Issue access and refresh tokens (signing key from configuration, rotation,
+  revocation).
 - [ ] Build the auth screens from the board (single field at sign-in, two at sign-up).
 - [ ] Implement identifier parsing and phone normalization with unit tests.
-- [ ] Implement the auth service (the only place importing Supabase).
-- [ ] Add native Google sign-in and exchange its token with Supabase.
+- [ ] Implement the mobile auth service (token storage in `expo-secure-store`, refresh,
+  sign-out) and the API client's authorization header.
+- [ ] Add native Google sign-in and verify the ID token in the API.
 - [ ] Add the profile bootstrap endpoint and its tests.
 - [ ] Add or change the phone or e-mail in the account settings.
 - [ ] Add the route guard and session handling.
@@ -118,8 +133,11 @@ create their profile in the API on first use.
 ## Test strategy
 
 Component tests for each screen with a phone and an e-mail identifier (validation,
-errors, loading). Unit tests for identifier parsing and phone normalization. Service tests with a fake Supabase client. API
-integration tests for bootstrap idempotency and `GET /me` for each identity type.
+errors, loading). Unit tests for identifier parsing, phone normalization, code
+hashing, expiry and rate limits. Mobile service tests with a fake API. API integration
+tests (real PostGIS container, fake SMS and e-mail senders) for every flow: sign-up by
+phone, by e-mail and both, sign-in, lockout, refresh rotation and reuse detection,
+reset, Google with a test token, bootstrap idempotency and `GET /me`.
 
 ## Risks and security considerations
 
@@ -127,9 +145,11 @@ integration tests for bootstrap idempotency and `GET /me` for each identity type
   device, and monitor the volume sent.
 - Delivery may vary by operator (Telma/Yas, Orange, Airtel): test all three.
 - Never log tokens, codes, or full phone numbers.
+- Account security is ours: follow the OWASP authentication and session cheat sheets,
+  keep Identity's password hashing, and review the flows before the beta.
 - E-mail deliverability: use a verified sending domain before beta.
 
 ## Notes and decisions
 
-Check the current Expo and Supabase docs for phone OTP and native Google sign-in
-before choosing libraries.
+Check the current Microsoft Learn docs for ASP.NET Core Identity on .NET 10, and the
+Expo and Google docs for native Google sign-in, before choosing libraries.

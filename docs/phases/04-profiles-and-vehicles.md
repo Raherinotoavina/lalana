@@ -20,8 +20,10 @@ register vehicles with photos, reused on every trip they publish.
 ## Scope
 
 - API: `GET/PUT /me/profile`, `GET /profiles/{id}`, `GET/POST/PUT/DELETE /me/vehicles`.
-- Photo upload: the API returns a signed Supabase Storage upload URL; the app
-  compresses the image on the device, uploads it, then confirms to the API.
+- Photo upload: the app compresses the image on the device and uploads it to the API,
+  which checks type and size, resizes it, and stores it through `IFileStorage` (disk
+  volume of the host first). Photos are read through short-lived signed URLs issued
+  by the API.
 - Profile screen (own and others), edit-profile screen, vehicle form reused by
   Phase 05's publishing step 2.
 - Placeholders for stats and reviews until Phases 07 and 11 provide data.

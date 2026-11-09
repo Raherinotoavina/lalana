@@ -9,13 +9,15 @@ Design board: Claude Design canvas "Covoiturage — Maquette V1"
 (https://claude.ai/artifact/AeiqLeQhtQeiZi2e6Pevty). Palette "Nuit + Soleil".
 Architecture, stack, and mandatory rules: [../architecture.md](../architecture.md).
 
-V1 uses an Expo mobile app, a C# / ASP.NET Core API that owns every business rule,
-and Supabase for managed Postgres + PostGIS, Auth, and Storage.
+V1 uses an Expo mobile app and a C# / ASP.NET Core API that owns every business rule
+and the accounts (ASP.NET Core Identity), with PostgreSQL + PostGIS and photo storage,
+all self-hosted in Docker: locally during development, on one small VPS later
+(decided 2026-11-09 for the lowest cost; no Supabase).
 
 ## V1 roadmap
 
 1. [Repository and mobile foundation](./01-repository-and-mobile-foundation.md) — in progress.
-2. [API and infrastructure foundation](./02-api-and-infrastructure-foundation.md) — not started.
+2. [API and infrastructure foundation](./02-api-and-infrastructure-foundation.md) — in progress.
 3. [Authentication](./03-authentication.md) — not started.
 4. [Profiles and vehicles](./04-profiles-and-vehicles.md) — not started.
 5. [Places and publishing](./05-places-and-publishing.md) — not started.

@@ -1,0 +1,39 @@
+# Local stack: PostgreSQL + PostGIS and the API. Copy .env.example to .env first.
+#   docker compose up --build        then  http://localhost:5080/health/ready
+# The same services run on the VPS later, behind Caddy, without the database port.
+name: lalana
+
+services:
+  db:
+    build: ./docker/postgis
+    image: lalana-postgis:17
+    environment:
+      POSTGRES_DB: lalana
+      POSTGRES_USER: lalana
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in api/.env}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    # Published on this machine only, so `dotnet run` and database tools can connect.
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lalana -d lalana"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
+      ConnectionStrings__Lalana: Host=db;Database=lalana;Username=lalana;Password=${POSTGRES_PASSWORD}
+      Database__MigrateOnStartup: "true"
+      Auth__SigningPublicKeyPem: ${AUTH_SIGNING_PUBLIC_KEY_PEM:-}
+    ports:
+      - "5080:8080"
+
+volumes:
+  db-data:
