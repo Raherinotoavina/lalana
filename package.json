@@ -1,0 +1,16 @@
+{
+  "name": "lalana",
+  "private": true,
+  "description": "Repository tooling: git hooks and the full validation suite.",
+  "scripts": {
+    "prepare": "husky",
+    "validate": "sh scripts/validate.sh"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0"
+  }
+}

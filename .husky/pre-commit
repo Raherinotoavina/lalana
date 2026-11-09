@@ -1,0 +1,2 @@
+# Fast checks on staged files only (each app has its own lint-staged config).
+npx --no-install lint-staged
