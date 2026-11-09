@@ -5,14 +5,32 @@ Status: agreed for V1 on 2026-11-09. Working product name: "lalana" (placeholder
 ## Decision
 
 V1 ships with a dedicated **C# / ASP.NET Core** backend from the start, so the
-business logic is never rewritten. Supabase is kept only for what it does well and
-would be costly to rebuild: managed **Postgres (+ PostGIS)**, **Auth** (phone or
-e-mail with password, verification codes, password reset, Google sign-in), and **Storage** (photos).
+business logic is never rewritten.
 
-Alternatives considered: Supabase-only V1 (faster, but business logic would be
-rewritten later), Node/TypeScript (shared language, more assembly), Go (cheapest to
-run, more hand-written code), Java (heavier to host), Rust (too slow to develop for
-this product).
+**Self-hosted, lowest cost (decided 2026-11-09, replacing Supabase).** The whole
+backend runs in Docker and depends on no backend-as-a-service: the API,
+**PostgreSQL + PostGIS**, **ASP.NET Core Identity** for accounts, and file storage for
+photos. Development runs entirely on the developer's machine (cost: 0). When staging
+or the beta needs a server, the same Docker Compose stack goes on **one small VPS**
+(about 4–6 € a month) with encrypted off-site backups on an object-storage free tier.
+
+Why not the alternatives:
+
+- **Supabase**: once accounts move into the API, it would only host the database, as
+  one more vendor; the free tier pauses after a week of inactivity, and the API still
+  needs a host of its own.
+- **Managed platforms** (Railway, Render, Azure App Service…): simpler to operate but
+  2 to 5 times the cost of a VPS for the same load.
+- **Free tiers that sleep or scale to zero**: they break the SignalR chat and the
+  background jobs (outbox, expirations), and the first request after a pause takes
+  seconds, which is unacceptable on 3G.
+
+The code stays portable: moving the database to a managed Postgres, or the API to a
+managed platform, later only changes configuration and the deploy step.
+
+Earlier alternatives for the backend language: Node/TypeScript (shared language, more
+assembly), Go (cheapest to run, more hand-written code), Java (heavier to host), Rust
+(too slow to develop for this product).
 
 ## Stack
 
@@ -22,16 +40,17 @@ this product).
 | Mobile server state | TanStack Query (cache, retries, loading and error states, invalidation) over the generated API client |
 | API | ASP.NET Core on the current .NET LTS (verify at Phase 02), minimal APIs, OpenAPI |
 | Data access | EF Core + Npgsql + NetTopologySuite (PostGIS) |
-| Database | Supabase-managed Postgres + PostGIS, app tables in schema `app` |
-| Auth | Supabase Auth: sign-up with a mobile number and/or an e-mail (at least one, each confirmed by a code) and a password; sign-in with either one + password; password reset by SMS or e-mail code; Google. The API validates Supabase JWTs |
-| SMS | An SMS provider supported by Supabase Auth, to be chosen for Madagascar numbers (+261) |
-| Files | Supabase Storage; the API issues signed upload and read URLs |
+| Database | PostgreSQL + PostGIS in Docker (local now, the VPS later), app tables in schema `app`, never reachable from the internet |
+| Auth | ASP.NET Core Identity in the API (users in schema `app`): sign-up with a mobile number and/or an e-mail (at least one, each confirmed by a code) and a password; sign-in with either one + password; password reset by SMS or e-mail code; Google (ID token verified by the API). The API issues short-lived JWT access tokens and rotating refresh tokens |
+| SMS | SMS provider for Madagascar numbers (+261), called by the API behind a port; the cheapest reliable one, to be chosen in Phase 03 |
+| E-mail | Transactional e-mail service with a free tier (Brevo, Resend…), behind a port, to be chosen in Phase 03 |
+| Files | `IFileStorage` port; first implementation on a disk volume of the host, served through short-lived signed URLs issued by the API; images resized and compressed on upload; can move to S3-compatible storage later without code changes |
 | Realtime | SignalR hub in the API (chat, booking status) |
 | Background work | Hosted services: transactional outbox, expirations, push dispatch |
 | Push | `expo-notifications` on device; the API calls the Expo push service |
 | Payments | Local provider for Madagascar, to be decided (Phase 10) |
-| Hosting | API as a Docker image on a European PaaS (Fly.io Paris or equivalent), next to the Supabase region |
-| CI/CD | GitHub Actions: mobile checks, API checks, image build, staging deploy |
+| Hosting | Now: local only, Docker Compose. Later (staging, beta, V1): one small VPS running Docker Compose (API, PostgreSQL + PostGIS, Caddy for HTTPS), encrypted daily backups to an object-storage free tier (Cloudflare R2 or Backblaze B2) with a tested restore, free uptime monitoring |
+| CI/CD | GitHub Actions: mobile checks, API checks, image build; deploy to the VPS once it exists |
 
 ## Repository layout
 
@@ -40,7 +59,7 @@ apps/mobile/            Expo app
 api/
   src/Lalana.Domain/          Entities, value objects, business rules (no I/O)
   src/Lalana.Application/     Use cases, ports (interfaces), DTOs
-  src/Lalana.Infrastructure/  EF Core, Supabase, payment, push adapters
+  src/Lalana.Infrastructure/  EF Core, Identity stores, file storage, SMS, e-mail, payment, push adapters
   src/Lalana.Api/             HTTP endpoints, auth, SignalR, hosted services
   tests/Lalana.Domain.Tests/
   tests/Lalana.Application.Tests/
@@ -52,9 +71,8 @@ docs/
 
 1. **All business rules live in the API**, in `Domain` and `Application`. The mobile
    app never decides a price, a commission, a seat count, or a status transition.
-2. **The mobile app never reads or writes app tables directly.** It talks to the API
-   only, plus Supabase Auth for sign-in. The `app` schema is not exposed through
-   Supabase's REST API (no grants to `anon` / `authenticated`).
+2. **The mobile app talks to the API only.** The database listens on the private
+   Docker network, never on a public port; nothing but the API reaches it.
 3. **Generated API client, read through TanStack Query.** The API publishes an OpenAPI
    document; the mobile app generates its TypeScript client and types from it.
    `src/services/<domain>.ts` wraps the generated client; `src/features/<domain>` exposes
@@ -62,8 +80,10 @@ docs/
    only the hooks (decided 2026-11-09). No screen calls `fetch` or the client directly.
    Queries retry network and 5xx errors (not 4xx); mutations are never retried
    automatically.
-4. **Identity is the Supabase Auth user id.** The API validates the JWT (issuer,
-   audience, signing keys from the project's JWKS) and loads the matching profile.
+4. **Identity is the ASP.NET Core Identity user id** (a GUID). The API issues and
+   validates its own tokens: short-lived JWT access tokens (asymmetric signature,
+   checked issuer, audience and lifetime) and refresh tokens stored hashed, rotated
+   on use and revocable. The mobile app keeps them in `expo-secure-store`.
 5. **Money is a `long` number of Ariary** (DB `bigint`), never a floating type. Every
    movement is an append-only ledger row; every provider call carries an idempotency
    key; every webhook is verified and processed idempotently.
@@ -71,11 +91,11 @@ docs/
    notification events are written in the same transaction; a hosted service sends
    push notifications and SignalR events afterwards.
 7. **Time is `timestamptz` (UTC)**, displayed in `Indian/Antananarivo`.
-8. **Secrets stay server-side.** The mobile app holds only public configuration
-   (API URL, Supabase URL and anon key). Provider keys and the database connection
-   string live in the API's secret store.
-9. **Migrations are EF Core migrations**, applied by the CI deploy step, never by hand
-   on staging or production.
+8. **Secrets stay server-side.** The mobile app holds only public configuration (the
+   API URL). The token signing key, the database connection string and provider keys
+   live in environment or secret files on the host (never in git) and in CI secrets.
+9. **Migrations are EF Core migrations**, applied by the deploy step (and by the
+   integration tests), never by hand on staging or production.
 10. **Every code change is tested, and each project keeps its own coverage at or above
     80 %** (statements, branches, functions and lines for the mobile app; lines and
     branches for the API). The threshold is measured per project, never as an average
@@ -129,4 +149,7 @@ the locking is covered by a concurrent integration test.
 - Whether the fare itself is paid in cash to the driver or through the app.
 - SMS provider for sign-in codes (delivery to Malagasy operators, price per SMS, fraud
   protection).
-- Final product name, Supabase region, and API host (latency check from Antananarivo).
+- Transactional e-mail provider (free tier, deliverability, French templates).
+- VPS provider and region when staging is needed (latency check from Antananarivo,
+  price), and the backup target.
+- Final product name.

@@ -21,7 +21,7 @@ conversation.
 - API: `GET /me/conversations`, `POST /conversations` (find or create),
   `GET /conversations/{id}/messages` (cursor), `POST /conversations/{id}/messages`,
   `POST /conversations/{id}/read`.
-- SignalR hub authenticated with the Supabase JWT: new messages and read receipts;
+- SignalR hub authenticated with the API's access token: new messages and read receipts;
   the app falls back to polling when the connection drops.
 - New-message push through Phase 08's outbox (not when the conversation is open).
 - Block and report a member (minimum safety).

@@ -5,16 +5,12 @@
 
 export type PublicEnv = {
   apiUrl: string;
-  supabaseUrl: string;
-  supabaseAnonKey: string;
 };
 
 export type RawPublicEnv = { [K in keyof PublicEnv]: string | undefined };
 
 export const ENV_VARIABLES: Record<keyof PublicEnv, string> = {
   apiUrl: 'EXPO_PUBLIC_API_URL',
-  supabaseUrl: 'EXPO_PUBLIC_SUPABASE_URL',
-  supabaseAnonKey: 'EXPO_PUBLIC_SUPABASE_ANON_KEY',
 };
 
 export class EnvError extends Error {
@@ -47,8 +43,6 @@ export function parsePublicEnv(raw: RawPublicEnv): PublicEnv {
   }
   return {
     apiUrl: parseUrl(ENV_VARIABLES.apiUrl, (raw.apiUrl ?? '').trim()),
-    supabaseUrl: parseUrl(ENV_VARIABLES.supabaseUrl, (raw.supabaseUrl ?? '').trim()),
-    supabaseAnonKey: (raw.supabaseAnonKey ?? '').trim(),
   };
 }
 
@@ -56,7 +50,5 @@ export function parsePublicEnv(raw: RawPublicEnv): PublicEnv {
 export function readPublicEnv(): PublicEnv {
   return parsePublicEnv({
     apiUrl: process.env.EXPO_PUBLIC_API_URL,
-    supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
-    supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
   });
 }

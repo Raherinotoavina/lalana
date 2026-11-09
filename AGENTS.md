@@ -6,7 +6,8 @@ The Expo sections below apply inside `apps/mobile/` (paths such as `src/app/` ar
 
 - Target the current .NET LTS. Before using an ASP.NET Core, EF Core, Npgsql, or SignalR API, check the official Microsoft Learn docs for that version; do not rely on memory.
 - All business rules (prices, commissions, seat capacity per segment, booking status transitions) live in `Lalana.Domain` and `Lalana.Application`. Endpoints stay thin. The mobile app never decides them.
-- The mobile app never accesses app tables through Supabase. It calls the API (generated OpenAPI client) and uses Supabase only for Auth.
+- The mobile app talks to the API only (generated OpenAPI client, used through TanStack Query hooks). Accounts and sign-in are ASP.NET Core Identity in the API; there is no backend-as-a-service.
+- Everything runs locally with Docker (PostgreSQL + PostGIS, the API). Keep the stack runnable on one small VPS with Docker Compose; choose the lowest-cost option that stays always-on (see `docs/architecture.md`).
 - Money is `long` Ariary, never `float`, `double`, or `decimal` rounding tricks. Ledger rows are append-only. Provider calls and webhooks are idempotent.
 - Schema changes are EF Core migrations, applied by CI, never by hand on shared environments.
 - Commands:

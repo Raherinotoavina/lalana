@@ -9,6 +9,10 @@ them, per segment of the route.
 | `api/` | ASP.NET Core API that owns every business rule (Phase 02) |
 | `docs/` | [Architecture](docs/architecture.md), [phases](docs/phases/README.md), [backlog](docs/features/README.md) |
 
+The backend is self-hosted: the API, PostgreSQL + PostGIS, accounts (ASP.NET Core
+Identity) and photo storage run in Docker, locally for now and on one small VPS later.
+See [architecture](docs/architecture.md).
+
 Design board: Claude Design canvas "Covoiturage — Maquette V1"
 (https://claude.ai/artifact/AeiqLeQhtQeiZi2e6Pevty).
 
@@ -51,9 +55,7 @@ the app and readable by anyone: never put a secret there. Real values go in
 
 | Variable | Purpose |
 | --- | --- |
-| `EXPO_PUBLIC_API_URL` | Lalana API base URL |
-| `EXPO_PUBLIC_SUPABASE_URL` | Supabase project URL (Auth only) |
-| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon key (public by design) |
+| `EXPO_PUBLIC_API_URL` | Lalana API base URL (`http://10.0.2.2:5080` from the Android emulator) |
 
 ## Git workflow and checks
 
@@ -79,4 +81,5 @@ the app and readable by anyone: never put a secret there. Real values go in
 | `ui/` | Design-system components and the icon set (Lucide; never emoji as icons) |
 | `theme/` | Tokens from the board: colours, type, spacing, radii |
 
-Only `src/services/auth*` may import `@supabase/*`; lint fails anywhere else.
+Only `src/services/` may import the generated API client; screens and features use
+TanStack Query hooks. Lint fails otherwise.
