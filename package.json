@@ -4,7 +4,8 @@
   "description": "Repository tooling: git hooks and the full validation suite.",
   "scripts": {
     "prepare": "husky",
-    "validate": "sh scripts/validate.sh"
+    "validate": "sh scripts/validate.sh",
+    "test:scripts": "node --test --experimental-test-coverage --test-coverage-include=scripts/*.mjs --test-coverage-exclude=scripts/*.test.mjs --test-coverage-lines=80 --test-coverage-branches=80 --test-coverage-functions=80 scripts/*.test.mjs"
   },
   "engines": {
     "node": ">=24"

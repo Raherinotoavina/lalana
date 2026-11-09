@@ -63,7 +63,10 @@ the app and readable by anyone: never put a secret there. Real values go in
   staged files.
 - `pre-push`: the complete suite (`npm run validate` at the root), with coverage.
 - CI (`.github/workflows/ci.yml`) runs the same checks on every pull request and on
-  `main`. Hooks can be skipped locally; CI cannot.
+  `main`: lint, typecheck, format, tests, and a coverage gate that fails below 80 % on
+  any metric and writes the coverage table to the job summary. The `CI OK` job passes
+  only when every check passed; it is the check to require before merging. Hooks can be
+  skipped locally; CI cannot.
 
 ## Code layout (`apps/mobile/src`)
 
