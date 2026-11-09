@@ -56,28 +56,37 @@ locally today and on a small VPS later.
 
 ## Implementation tasks
 
-- [ ] Create the solution, projects, and shared build settings.
-- [ ] Add EF Core, the `app` schema, PostGIS, and the first migration.
-- [ ] Add JWT validation for the API's own tokens and `GET /me`.
-- [ ] Add health endpoints, problem details, logging, and correlation ids.
-- [ ] Publish OpenAPI at build time and wire client generation in the mobile app.
-- [ ] Add unit and integration test projects with Testcontainers.
-- [ ] Add the API CI job (format, build, tests, coverage gate, OpenAPI drift, image
-  build) and the C# pre-commit checks.
-- [ ] Add the Dockerfile and the local Docker Compose stack; document secrets and
-  environments.
+- [x] Create the solution, projects, and shared build settings (.NET 10, `Lalana.slnx`,
+  central packages, MTP + xUnit v3).
+- [x] Add EF Core, the `app` schema, PostGIS, and the first migration (snake_case names,
+  history table in `app`).
+- [x] Add JWT validation for the API's own tokens (ES256) and `GET /me`; every endpoint
+  requires a token unless marked anonymous.
+- [x] Add health endpoints, problem details, logging (JSON outside Development, no query
+  strings or bodies), and correlation ids.
+- [x] Publish OpenAPI at build time (`api/openapi/lalana-api.json`) and wire client
+  generation in the mobile app (`@hey-api/openapi-ts`, `useMe` through TanStack Query).
+- [x] Add unit and integration test projects with Testcontainers (multi-architecture
+  PostGIS image built from `postgres:17` and Debian's PostGIS package).
+- [x] Add the API CI job (format, build, tests, coverage gate, OpenAPI drift, image
+  build) and the C# pre-commit checks. Not run on GitHub yet: Actions does not start on
+  this repository (see the CI pull request).
+- [x] Add the Dockerfile (chiseled runtime image, about 200 MB) and the local Docker
+  Compose stack; document secrets and environments (`api/.env.example`, README).
 - [ ] Later, when the VPS exists: Compose with Caddy, deploy from `main`, migrations in
   the deploy step, encrypted off-site backups with a tested restore.
 
 ## Acceptance criteria
 
-- [ ] `GET /me` returns 401 without a token, 401 with an expired token or a wrong
+- [x] `GET /me` returns 401 without a token, 401 with an expired token or a wrong
   issuer or audience, and the user id with a valid token.
-- [ ] `GET /health/ready` reports the local database as reachable, and not ready when
+- [x] `GET /health/ready` reports the local database as reachable, and not ready when
   it is down.
-- [ ] The mobile app calls `GET /me` through the generated client.
-- [ ] Format, build, tests, and coverage ≥ 80 % pass locally and in CI.
-- [ ] `docker compose up` starts the database and the API locally.
+- [x] The mobile app calls `GET /me` through the generated client (tested with a fake
+  `fetch`; a real call needs the tokens of Phase 03).
+- [ ] Format, build, tests, and coverage ≥ 80 % pass locally and in CI. Local: passing
+  (API 98.7 % lines, 88.8 % branches; 31 tests). CI: blocked until Actions starts.
+- [x] `docker compose up` starts the database and the API locally.
 - [ ] Later: a merge to `main` deploys staging on the VPS and applies migrations.
 
 ## Test strategy

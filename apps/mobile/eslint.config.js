@@ -17,7 +17,7 @@ module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ['dist/*', 'coverage/*', '.expo/*', 'expo-env.d.ts'],
+    ignores: ['dist/*', 'coverage/*', '.expo/*', 'expo-env.d.ts', 'src/services/api/**'],
   },
   {
     rules: {

@@ -35,6 +35,29 @@ npx expo start
 The app uses native modules beyond Expo Go's set over time; use a development build
 (`npx expo run:android`) when Expo Go is not enough.
 
+## API (`api`)
+
+Requires the .NET 10 SDK and Docker.
+
+```bash
+cd api
+cp .env.example .env            # local values only
+docker compose up --build       # PostgreSQL + PostGIS and the API on http://localhost:5080
+```
+
+| Command (from `api/`) | Does |
+| --- | --- |
+| `dotnet build Lalana.slnx` | Builds with warnings as errors and regenerates `openapi/lalana-api.json` (commit it) |
+| `dotnet test --solution Lalana.slnx` | Unit and integration tests (Testcontainers starts a PostGIS container) |
+| `sh ../scripts/api-coverage.sh` | Tests with merged coverage; fails below 80 % lines or branches |
+| `dotnet format Lalana.slnx` | Formats the code (CI runs it with `--verify-no-changes`) |
+| `dotnet ef migrations add <Name> --project src/Lalana.Infrastructure --startup-project src/Lalana.Api --output-dir Persistence/Migrations` | Adds a migration (`dotnet tool restore` first) |
+
+`GET /health` (liveness), `GET /health/ready` (database reachable), `GET /me` (signed-in
+member, needs an access token). In Development, the OpenAPI document is also served at
+`/openapi/v1.json`. After an API change, run `npm run api:generate` in `apps/mobile` to
+regenerate the typed client.
+
 ## Mobile scripts (`apps/mobile`)
 
 | Command | Does |

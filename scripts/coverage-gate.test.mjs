@@ -34,6 +34,18 @@ test('fails on a single metric below the threshold', () => {
 test('rejects a summary without totals or with a missing metric', () => {
   assert.throws(() => evaluate({}), /no "total" section/);
   assert.throws(() => evaluate({ total: { statements: { pct: 90 } } }), /no "branches"/);
+  assert.throws(() => evaluate({ summary: { linecoverage: 90 } }), /no "branchcoverage"/);
+});
+
+test('reads ReportGenerator summaries (.NET): lines and branches', () => {
+  const rows = evaluate({ summary: { linecoverage: 98.8, branchcoverage: 79.5, methodcoverage: 90 } });
+  assert.deepEqual(
+    rows.map((row) => [row.metric, row.passed]),
+    [
+      ['lines', true],
+      ['branches', false],
+    ],
+  );
 });
 
 test('renders a Markdown table with the verdict', () => {
