@@ -2,7 +2,9 @@
 
 ## Status
 
-Not started
+In progress — code and checks on branch `feat/01-repository-and-mobile-foundation`
+(pull request open). Remaining: run the app on an Android development build and
+compare the tab bar with the board; first green CI run.
 
 ## Objective
 
@@ -19,6 +21,11 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 - UX is inspired by Facebook; the UI must not look like Facebook. Simplicity first:
   one yellow call to action per screen.
 - Android first; low-end devices and 3G/4G networks.
+- Server state on the mobile app goes through TanStack Query over the generated API
+  client (decided 2026-11-09); see architecture rule 3. The query client is set up in
+  this phase; the generated client arrives in Phase 02.
+- Coverage is at least 80 % per project (mobile and API separately), never averaged
+  (decided 2026-11-09).
 
 ## Scope
 
@@ -50,22 +57,28 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 
 ## Implementation tasks
 
-- [ ] Initialize the repository and the monorepo layout on a feature branch.
-- [ ] Create the Expo app and its folder structure.
-- [ ] Add theme tokens and base UI components with tests.
-- [ ] Build the tab bar shell matching the board.
-- [ ] Add the import-restriction lint rule.
-- [ ] Configure Jest, coverage thresholds, and validation scripts.
-- [ ] Add Husky hooks and the mobile CI job.
-- [ ] Write the README (setup, scripts, environment variables).
+- [x] Initialize the repository and the monorepo layout on a feature branch
+  (GitHub `Raherinotoavina/lalana`, private).
+- [x] Create the Expo app (SDK 58, React Native 0.88, React 19.3) and its folder structure.
+- [x] Add theme tokens and base UI components with tests (Button accent/ghost,
+  TextField, Card, Chip, Avatar, SegmentedControl, Logo, Screen, icon set from Lucide).
+- [x] Build the tab bar shell matching the board (`expo-router/ui` custom tabs).
+- [x] Add the import-restriction lint rule (tested by running ESLint).
+- [x] Configure Jest, coverage thresholds, and validation scripts.
+- [x] Set up TanStack Query (query client, retry policy, app-focus refetch).
+- [x] Add Husky hooks and the mobile CI job. The C# pre-commit checks come with
+  Phase 02 (`api/.lintstagedrc`), and `scripts/validate.sh` already runs the API suite
+  once `api/` exists.
+- [x] Write the README (setup, scripts, environment variables).
 
 ## Acceptance criteria
 
 - [ ] The app runs on an Android development build and shows the tab bar shell
   matching the board.
-- [ ] Lint, typecheck, and Jest with coverage ≥ 80 % pass locally and in CI.
-- [ ] Importing `@supabase/supabase-js` outside the auth service fails lint.
-- [ ] The pre-push hook runs the complete validation suite.
+- [ ] Lint, typecheck, and Jest with coverage ≥ 80 % pass locally and in CI. Local:
+  passing (100 % statements, functions and lines, 91 % branches). CI: pending first run.
+- [x] Importing `@supabase/supabase-js` outside the auth service fails lint.
+- [x] The pre-push hook runs the complete validation suite.
 
 ## Test strategy
 

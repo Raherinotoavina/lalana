@@ -19,6 +19,7 @@ this product).
 | Layer | Choice |
 |---|---|
 | Mobile app | Expo (React Native, TypeScript), Expo Router, Android first, iOS supported |
+| Mobile server state | TanStack Query (cache, retries, loading and error states, invalidation) over the generated API client |
 | API | ASP.NET Core on the current .NET LTS (verify at Phase 02), minimal APIs, OpenAPI |
 | Data access | EF Core + Npgsql + NetTopologySuite (PostGIS) |
 | Database | Supabase-managed Postgres + PostGIS, app tables in schema `app` |
@@ -54,9 +55,13 @@ docs/
 2. **The mobile app never reads or writes app tables directly.** It talks to the API
    only, plus Supabase Auth for sign-in. The `app` schema is not exposed through
    Supabase's REST API (no grants to `anon` / `authenticated`).
-3. **Generated API client.** The API publishes an OpenAPI document; the mobile app
-   generates its TypeScript client and types from it. Screens call
-   `src/services/<domain>.ts`, which wraps the generated client.
+3. **Generated API client, read through TanStack Query.** The API publishes an OpenAPI
+   document; the mobile app generates its TypeScript client and types from it.
+   `src/services/<domain>.ts` wraps the generated client; `src/features/<domain>` exposes
+   TanStack Query hooks (`useQuery` / `useMutation`) over those services, and screens use
+   only the hooks (decided 2026-11-09). No screen calls `fetch` or the client directly.
+   Queries retry network and 5xx errors (not 4xx); mutations are never retried
+   automatically.
 4. **Identity is the Supabase Auth user id.** The API validates the JWT (issuer,
    audience, signing keys from the project's JWKS) and loads the matching profile.
 5. **Money is a `long` number of Ariary** (DB `bigint`), never a floating type. Every
@@ -71,6 +76,10 @@ docs/
    string live in the API's secret store.
 9. **Migrations are EF Core migrations**, applied by the CI deploy step, never by hand
    on staging or production.
+10. **Every code change is tested, and each project keeps its own coverage at or above
+    80 %** (statements, branches, functions and lines for the mobile app; lines and
+    branches for the API). The threshold is measured per project, never as an average
+    across projects, and is enforced in each project's test configuration and in CI.
 
 ## Domain model (first draft)
 

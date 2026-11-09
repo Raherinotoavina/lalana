@@ -1,0 +1,2 @@
+# Full validation: lint, typecheck, format and tests with coverage for every app.
+npm run validate

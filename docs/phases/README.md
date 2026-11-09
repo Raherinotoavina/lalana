@@ -14,7 +14,7 @@ and Supabase for managed Postgres + PostGIS, Auth, and Storage.
 
 ## V1 roadmap
 
-1. [Repository and mobile foundation](./01-repository-and-mobile-foundation.md) — not started.
+1. [Repository and mobile foundation](./01-repository-and-mobile-foundation.md) — in progress.
 2. [API and infrastructure foundation](./02-api-and-infrastructure-foundation.md) — not started.
 3. [Authentication](./03-authentication.md) — not started.
 4. [Profiles and vehicles](./04-profiles-and-vehicles.md) — not started.
