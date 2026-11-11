@@ -6,7 +6,7 @@ acceptance criterion is verified, including manual checks on a native build; a m
 pull request alone does not complete it.
 
 Design board: Claude Design canvas "Covoiturage — Maquette V1"
-(https://claude.ai/artifact/AeiqLeQhtQeiZi2e6Pevty). Palette "Forêt humide + Fougère"
+(https://claude.ai/artifact/AeiqLeQhtQeiZi2e6Pevty). Palette "Électrique"
 (tokens in `apps/mobile/src/theme/tokens.ts`).
 Architecture, stack, and mandatory rules: [../architecture.md](../architecture.md).
 

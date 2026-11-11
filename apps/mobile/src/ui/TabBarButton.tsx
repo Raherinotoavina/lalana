@@ -24,7 +24,7 @@ export function TabBarButton({
   ref,
   ...pressableProps
 }: TabBarButtonProps) {
-  const color = isFocused ? colors.accent : colors.tabInactive;
+  const color = isFocused ? colors.tabActive : colors.tabInactive;
   return (
     <Pressable
       {...pressableProps}

@@ -28,17 +28,17 @@ function contrast(a: string, b: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-describe('palette "Forêt humide + Fougère"', () => {
+describe('palette "Électrique"', () => {
   it.each([
-    ['button text on the primary action', colors.onAccent, colors.accent],
-    ['button text on a pressed primary action', colors.onAccent, colors.accentPressed],
+    ['button label on the primary action', colors.onAccent, colors.accent],
+    ['button label on a pressed primary action', colors.onAccent, colors.accentPressed],
+    ['text on brand surfaces', colors.onPrimary, colors.primary],
     ['links on the background', colors.link, colors.background],
     ['links on a card', colors.link, colors.surface],
     ['text on the background', colors.ink, colors.background],
     ['secondary text on the background', colors.muted, colors.background],
     ['secondary text on a card', colors.muted, colors.surface],
-    ['text on brand surfaces', colors.onPrimary, colors.primary],
-    ['active tab on the tab bar', colors.accent, colors.tabBar],
+    ['active tab on the tab bar', colors.tabActive, colors.tabBar],
     ['inactive tab on the tab bar', colors.tabInactive, colors.tabBar],
     ['info text on its tint', colors.infoInk, colors.infoSurface],
     ['error text on the background', colors.danger, colors.background],
@@ -46,13 +46,9 @@ describe('palette "Forêt humide + Fougère"', () => {
     expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('makes the primary action shine on brand and dark surfaces (3:1)', () => {
-    expect(contrast(colors.accent, colors.primary)).toBeGreaterThanOrEqual(3);
+  it('makes the primary action stand out from light surfaces and the tab bar (3:1)', () => {
+    expect(contrast(colors.accent, colors.background)).toBeGreaterThanOrEqual(3);
+    expect(contrast(colors.accent, colors.surface)).toBeGreaterThanOrEqual(3);
     expect(contrast(colors.accent, colors.tabBar)).toBeGreaterThanOrEqual(3);
-  });
-
-  it('keeps a dark label on the accent, which carries the button on light backgrounds', () => {
-    expect(contrast(colors.accent, colors.background)).toBeLessThan(3);
-    expect(contrast(colors.onAccent, colors.accent)).toBeGreaterThanOrEqual(7);
   });
 });

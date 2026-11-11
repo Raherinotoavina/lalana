@@ -1,43 +1,45 @@
 /**
- * Design tokens from the board "Covoiturage — Maquette V1", palette "Forêt humide + Fougère"
- * (chosen 2026-11-11 on the board's "Palettes V5" artboard): the deep green of the
- * Ranomafana rainforest and the tender green of young ferns.
+ * Design tokens from the board "Covoiturage — Maquette V1", palette "Électrique"
+ * (chosen 2026-11-11 on the board's "Couleurs" artboard): white surfaces, ink text and a
+ * single electric blue for brand surfaces and every primary action.
  * Screens and components read colours, sizes and fonts from here, never literals.
  *
  * Roles:
- * - `primary`: brand surfaces (headers, selected chips, dark cards) and links.
+ * - `primary`: brand surfaces (sign-in header, selected chips, sent messages).
  * - `accent`: the screen's single primary action, the logo and the "+" tab, always with
- *   `onAccent` text. It shines on brand and dark surfaces (8.4:1); on the light background
- *   its edge is soft (1.35:1), so its dark label carries it (10.4:1).
+ *   the white `onAccent` label (5.4:1). It stands out from the light background (5.0:1).
+ * - `link`: text links and blue text on light surfaces.
+ * - `tabActive`: the selected tab's icon and label on the ink tab bar.
  */
 
 export const colors = {
-  primary: '#163B2C',
-  primaryPressed: '#0F2A1F',
+  primary: '#4253FF',
+  primaryPressed: '#3442E0',
   onPrimary: '#FFFFFF',
-  accent: '#B6E36C',
-  accentPressed: '#A3D457',
-  accentBusy: '#CFEC9E',
-  onAccent: '#11291F',
-  link: '#163B2C',
-  ink: '#13221B',
-  background: '#F3F5F0',
+  accent: '#4253FF',
+  accentPressed: '#3442E0',
+  accentBusy: '#3442E0',
+  onAccent: '#FFFFFF',
+  link: '#2E3BE0',
+  ink: '#121218',
+  background: '#F6F6F9',
   surface: '#FFFFFF',
-  muted: '#56645B',
-  subtle: '#9AA79F',
-  border: '#E6E2D9',
-  divider: '#EFECE5',
-  segmentTrack: '#EAE6DD',
-  segmentInactive: '#46554B',
-  tabBar: '#0F261D',
-  tabInactive: '#B3C3B8',
+  muted: '#5C5D6B',
+  subtle: '#9C9DAA',
+  border: '#E6E7EE',
+  divider: '#EEEFF3',
+  segmentTrack: '#EBECF1',
+  segmentInactive: '#4A4B57',
+  tabBar: '#121218',
+  tabActive: '#FFFFFF',
+  tabInactive: '#A0A1B0',
   danger: '#B42318',
   dangerSurface: '#FDECEA',
   dangerInk: '#8A1C13',
   success: '#17683B',
-  infoSurface: '#E1EEDF',
-  infoInk: '#0F2A1F',
-  disabledSurface: '#E6E2D9',
+  infoSurface: '#ECEEFF',
+  infoInk: '#2E3BE0',
+  disabledSurface: '#E6E7EE',
   notification: '#E5484D',
 } as const;
 
