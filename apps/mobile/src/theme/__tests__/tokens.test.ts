@@ -28,7 +28,7 @@ function contrast(a: string, b: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-describe('palette "Électrique"', () => {
+describe('palette "Indigo + Mangue"', () => {
   it.each([
     ['button label on the primary action', colors.onAccent, colors.accent],
     ['button label on a pressed primary action', colors.onAccent, colors.accentPressed],
@@ -46,9 +46,12 @@ describe('palette "Électrique"', () => {
     expect(contrast(foreground, background)).toBeGreaterThanOrEqual(4.5);
   });
 
-  it('makes the primary action stand out from light surfaces and the tab bar (3:1)', () => {
-    expect(contrast(colors.accent, colors.background)).toBeGreaterThanOrEqual(3);
-    expect(contrast(colors.accent, colors.surface)).toBeGreaterThanOrEqual(3);
+  it('makes the primary action stand out from the dark brand surfaces (3:1)', () => {
     expect(contrast(colors.accent, colors.tabBar)).toBeGreaterThanOrEqual(3);
+    expect(contrast(colors.accent, colors.primary)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('labels the primary action with the brand indigo', () => {
+    expect(colors.onAccent).toBe(colors.primary);
   });
 });

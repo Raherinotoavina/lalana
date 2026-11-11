@@ -1,45 +1,47 @@
 /**
- * Design tokens from the board "Covoiturage — Maquette V1", palette "Électrique"
- * (chosen 2026-11-11 on the board's "Couleurs" artboard): white surfaces, ink text and a
- * single electric blue for brand surfaces and every primary action.
+ * Design tokens from the board "Covoiturage — Maquette V1", palette "Indigo + Mangue"
+ * (chosen 2026-11-11): white surfaces, deep indigo for brand surfaces and the tab bar,
+ * and one bright mango for every primary action.
  * Screens and components read colours, sizes and fonts from here, never literals.
  *
  * Roles:
- * - `primary`: brand surfaces (sign-in header, selected chips, sent messages).
+ * - `primary`: brand surfaces (sign-in header, selected chips, sent messages), always
+ *   with the white `onPrimary` label.
  * - `accent`: the screen's single primary action, the logo and the "+" tab, always with
- *   the white `onAccent` label (5.4:1). It stands out from the light background (5.0:1).
- * - `link`: text links and blue text on light surfaces.
- * - `tabActive`: the selected tab's icon and label on the ink tab bar.
+ *   the indigo `onAccent` label (9.3:1). Mango is lighter than the page, so a mango
+ *   button is identified by its indigo label and fill, not by contrast with the page.
+ * - `link`: text links and violet text on light surfaces.
+ * - `tabActive`: the selected tab's icon and label on the indigo tab bar (mango).
  */
 
 export const colors = {
-  primary: '#4253FF',
-  primaryPressed: '#3442E0',
+  primary: '#1B1640',
+  primaryPressed: '#120E2E',
   onPrimary: '#FFFFFF',
-  accent: '#4253FF',
-  accentPressed: '#3442E0',
-  accentBusy: '#3442E0',
-  onAccent: '#FFFFFF',
-  link: '#2E3BE0',
-  ink: '#121218',
-  background: '#F6F6F9',
+  accent: '#FFB020',
+  accentPressed: '#F09A00',
+  accentBusy: '#F09A00',
+  onAccent: '#1B1640',
+  link: '#4B3FC4',
+  ink: '#15132B',
+  background: '#F7F6FB',
   surface: '#FFFFFF',
-  muted: '#5C5D6B',
-  subtle: '#9C9DAA',
-  border: '#E6E7EE',
-  divider: '#EEEFF3',
-  segmentTrack: '#EBECF1',
-  segmentInactive: '#4A4B57',
-  tabBar: '#121218',
-  tabActive: '#FFFFFF',
-  tabInactive: '#A0A1B0',
+  muted: '#5D5A73',
+  subtle: '#A19EB5',
+  border: '#E7E5F0',
+  divider: '#EFEEF5',
+  segmentTrack: '#ECEAF3',
+  segmentInactive: '#4A4760',
+  tabBar: '#1B1640',
+  tabActive: '#FFB020',
+  tabInactive: '#A8A3C9',
   danger: '#B42318',
   dangerSurface: '#FDECEA',
   dangerInk: '#8A1C13',
   success: '#17683B',
-  infoSurface: '#ECEEFF',
-  infoInk: '#2E3BE0',
-  disabledSurface: '#E6E7EE',
+  infoSurface: '#FFF3D9',
+  infoInk: '#7A4F00',
+  disabledSurface: '#E7E5F0',
   notification: '#E5484D',
 } as const;
 
