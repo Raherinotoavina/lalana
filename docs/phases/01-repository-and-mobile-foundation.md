@@ -15,18 +15,21 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 - Stack agreed on 2026-11-09: Expo mobile app + C# / ASP.NET Core API from V1, then
   the same day self-hosted instead of Supabase (PostgreSQL + PostGIS, ASP.NET Core
   Identity, photo storage, all in Docker). See [architecture](../architecture.md).
-- Palette "Électrique" (final choice, 2026-11-11, on the board's "Couleurs" artboard,
-  after many rounds: "Nuit + Soleil", "Lagon + Soleil", "Latérite + Sable", "Forêt
-  humide + Fougère", "Cobalt + Papier", "Ciel + Ocre"): white surfaces, ink text
-  `#121218` on background `#F6F6F9`, one electric blue `#4253FF` for brand surfaces,
-  the primary action, the logo and the "+" tab, always with a white label (5.4:1); it
-  stands out from the light background (5.0:1). Links `#2E3BE0`, muted `#5C5D6B`, ink
-  tab bar with a white active tab. Lime green was ruled out because it is inDrive's
-  colour in the same sector, and bright orange because it is the Orange operator's.
+- Palette "Indigo + Mangue" (final choice, 2026-11-11, after many rounds: "Nuit + Soleil",
+  "Lagon + Soleil", "Latérite + Sable", "Forêt humide + Fougère", "Cobalt + Papier",
+  "Ciel + Ocre", "Électrique", "Fuchsia", then an "inDrive-like energy" round with
+  Latérite, Néon lagon, Cyan nuit, Aubergine + Corail, Noir + Vermillon, Ravinala + Litchi
+  and Graphite + Lilas): white surfaces, ink text `#15132B` on background `#F7F6FB`, deep
+  indigo `#1B1640` for brand surfaces and the tab bar, one bright mango `#FFB020` for the
+  primary action, the logo and the "+" tab, always with an indigo label (9.3:1). Mango is
+  lighter than the page, so a mango button is identified by its fill and indigo label.
+  Links `#4B3FC4`, muted `#5D5A73`, indigo tab bar with a mango active tab. Lime green was
+  ruled out because it is inDrive's colour in the same sector, and bright orange because
+  it is the Orange operator's.
   Font Plus Jakarta Sans. Avatars are rounded squares; the tab bar is a dark floating
-  bar with a blue "+" in the centre.
+  bar with a mango "+" in the centre.
 - UX is inspired by Facebook; the UI must not look like Facebook. Simplicity first:
-  one primary call to action per screen (electric blue with a white label).
+  one primary call to action per screen (mango with an indigo label).
 - Android first; low-end devices and 3G/4G networks.
 - Server state on the mobile app goes through TanStack Query over the generated API
   client (decided 2026-11-09); see architecture rule 3. The query client is set up in
