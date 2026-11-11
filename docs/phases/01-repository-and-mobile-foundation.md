@@ -16,11 +16,15 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 - Stack agreed on 2026-11-09: Expo mobile app + C# / ASP.NET Core API from V1, then
   the same day self-hosted instead of Supabase (PostgreSQL + PostGIS, ASP.NET Core
   Identity, photo storage, all in Docker). See [architecture](../architecture.md).
-- Palette "Nuit + Soleil": primary `#172554`, accent `#FFD23F`, ink `#111827`,
-  background `#F5F4F0`, muted `#5A6070`. Font Plus Jakarta Sans. Avatars are rounded
-  squares; the tab bar is a dark floating bar with a yellow "+" in the centre.
+- Palette "Lagon + Soleil" (chosen 2026-11-11 on the board's "Palettes V2" artboard,
+  replacing "Nuit + Soleil"): primary `#073B42`, primary action `#0A7C78` with white
+  text, link `#0A6460`, yellow spark `#FFD23F` (logo, "+" tab, buttons on dark
+  surfaces only), ink `#0F1F22`, background `#F5F4EF`, muted `#55636A`. The yellow
+  button was dropped because it barely stood out from the light background (1.3:1);
+  the teal one reaches 4.6:1. Font Plus Jakarta Sans. Avatars are rounded squares; the
+  tab bar is a dark floating bar with a yellow "+" in the centre.
 - UX is inspired by Facebook; the UI must not look like Facebook. Simplicity first:
-  one yellow call to action per screen.
+  one primary call to action per screen (teal on light backgrounds).
 - Android first; low-end devices and 3G/4G networks.
 - Server state on the mobile app goes through TanStack Query over the generated API
   client (decided 2026-11-09); see architecture rule 3. The query client is set up in

@@ -10,7 +10,7 @@ export type ButtonVariant = 'accent' | 'ghost';
 export type ButtonProps = {
   label: string;
   onPress: () => void;
-  /** "accent" is the single yellow call to action of a screen; "ghost" is everything else. */
+  /** "accent" is the single primary action of a screen; "ghost" is everything else. */
   variant?: ButtonVariant;
   disabled?: boolean;
   /** Shows a spinner and `loadingLabel`, and ignores presses. */
@@ -34,7 +34,8 @@ export function Button({
 }: ButtonProps) {
   const inactive = disabled || loading;
   const shownLabel = loading && loadingLabel ? loadingLabel : label;
-  const textColor = disabled ? colors.muted : colors.ink;
+  const enabledColor = variant === 'accent' ? colors.onAccent : colors.ink;
+  const textColor = disabled ? colors.muted : enabledColor;
 
   return (
     <Pressable
@@ -54,7 +55,7 @@ export function Button({
       ]}
     >
       <View style={styles.content}>
-        {loading ? <ActivityIndicator testID="button-spinner" color={colors.ink} /> : icon}
+        {loading ? <ActivityIndicator testID="button-spinner" color={textColor} /> : icon}
         <AppText
           variant={variant === 'accent' ? 'heading' : 'bodyStrong'}
           color={textColor}

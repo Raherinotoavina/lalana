@@ -1,31 +1,46 @@
 /**
- * Design tokens from the board "Covoiturage — Maquette V1", palette "Nuit + Soleil".
+ * Design tokens from the board "Covoiturage — Maquette V1", palette "Lagon + Soleil"
+ * (chosen 2026-11-11, replacing "Nuit + Soleil").
  * Screens and components read colours, sizes and fonts from here, never literals.
+ *
+ * Roles:
+ * - `primary`: brand surfaces (headers, selected chips, dark cards).
+ * - `accent`: the screen's single primary action, with `onAccent` text. It stands out
+ *   from the light background in sunlight (4.6:1), which the former yellow button did not.
+ * - `spark`: the yellow highlight, on the logo, the "+" tab and buttons that sit on a
+ *   dark surface. Never a button on a light background.
+ * - `link`: text links and accent text on light backgrounds.
  */
 
 export const colors = {
-  primary: '#172554',
-  primaryPressed: '#0F1A3D',
-  accent: '#FFD23F',
-  accentPressed: '#F5C518',
-  accentBusy: '#F5DE8A',
-  ink: '#111827',
-  background: '#F5F4F0',
+  primary: '#073B42',
+  primaryPressed: '#052C31',
+  onPrimary: '#FFFFFF',
+  accent: '#0A7C78',
+  accentPressed: '#086560',
+  accentBusy: '#086560',
+  onAccent: '#FFFFFF',
+  spark: '#FFD23F',
+  sparkPressed: '#F5C518',
+  onSpark: '#062A2F',
+  link: '#0A6460',
+  ink: '#0F1F22',
+  background: '#F5F4EF',
   surface: '#FFFFFF',
-  muted: '#5A6070',
+  muted: '#55636A',
   subtle: '#9AA1B0',
   border: '#E6E2D9',
   divider: '#EFECE5',
   segmentTrack: '#EAE6DD',
-  segmentInactive: '#474D5C',
-  tabBar: '#111827',
+  segmentInactive: '#45535A',
+  tabBar: '#062A2F',
   tabInactive: '#B8BECC',
-  onPrimary: '#FFFFFF',
   danger: '#B42318',
   dangerSurface: '#FDECEA',
   dangerInk: '#8A1C13',
   success: '#17683B',
-  infoSurface: '#E8ECF7',
+  infoSurface: '#DDF1EE',
+  infoInk: '#0A5551',
   disabledSurface: '#E6E2D9',
   notification: '#E5484D',
 } as const;
