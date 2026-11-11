@@ -2,32 +2,32 @@ const { defineConfig } = require('eslint/config');
 const expoConfig = require('eslint-config-expo/flat');
 const eslintPluginPrettierRecommended = require('eslint-plugin-prettier/recommended');
 
-/** Only the auth service may talk to Supabase; everything else goes through the API. */
-const SUPABASE_ONLY_IN_AUTH = {
-  patterns: [
-    {
-      group: ['@supabase/*'],
-      message:
-        'Supabase is used only for Auth, from src/services/auth*. Call the API through src/services instead.',
-    },
-  ],
+const NO_SUPABASE = {
+  group: ['@supabase/*'],
+  message: 'There is no Supabase: the app talks to the Lalana API only.',
 };
 
+/** Screens and features use TanStack Query hooks; only src/services touches the API client. */
+const API_CLIENT_ONLY_IN_SERVICES = {
+  group: ['@/services/api/*', '**/services/api/*'],
+  message:
+    'Use the TanStack Query hooks of src/features, which call src/services. Only src/services imports the generated API client.',
+};
 module.exports = defineConfig([
   expoConfig,
   eslintPluginPrettierRecommended,
   {
-    ignores: ['dist/*', 'coverage/*', '.expo/*', 'expo-env.d.ts'],
+    ignores: ['dist/*', 'coverage/*', '.expo/*', 'expo-env.d.ts', 'src/services/api/**'],
   },
   {
     rules: {
-      'no-restricted-imports': ['error', SUPABASE_ONLY_IN_AUTH],
+      'no-restricted-imports': ['error', { patterns: [NO_SUPABASE, API_CLIENT_ONLY_IN_SERVICES] }],
     },
   },
   {
-    files: ['src/services/auth.ts', 'src/services/auth/**/*.{ts,tsx}'],
+    files: ['src/services/**/*.{ts,tsx}'],
     rules: {
-      'no-restricted-imports': 'off',
+      'no-restricted-imports': ['error', { patterns: [NO_SUPABASE] }],
     },
   },
 ]);

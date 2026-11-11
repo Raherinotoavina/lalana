@@ -17,8 +17,10 @@ if iOS is in scope).
 
 ## Scope
 
-- Production environment: Supabase project, API deployment, secrets, backups,
-  migration procedure, rollback plan.
+- Production environment on the VPS (Docker Compose: API, PostgreSQL + PostGIS,
+  Caddy): secrets, encrypted off-site backups with a restore drill, server hardening
+  (firewall, SSH keys only, automatic security updates), migration procedure,
+  rollback plan. Move to a bigger VPS or a managed database only if load requires it.
 - Monitoring: API error tracking, structured logs, uptime checks, mobile crash
   reporting.
 - Performance pass on a low-end Android device; payload and image size budget.

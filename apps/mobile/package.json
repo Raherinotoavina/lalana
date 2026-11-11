@@ -27,6 +27,7 @@
     "react-native-worklets": "0.13.0"
   },
   "devDependencies": {
+    "@hey-api/openapi-ts": "0.99.0",
     "@testing-library/react-native": "^14.1.0",
     "@types/jest": "30.0.0",
     "@types/node": "^26.6.6",
@@ -51,7 +52,9 @@
     "format:check": "prettier --check .",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "validate": "npm run lint && npm run typecheck && npm run format:check && npm run test:coverage"
+    "validate": "npm run lint && npm run typecheck && npm run format:check && npm run test:coverage",
+    "api:generate": "openapi-ts",
+    "api:check": "openapi-ts && git diff --exit-code -- src/services/api"
   },
   "private": true,
   "jest": {
@@ -72,7 +75,8 @@
       "src/**/*.{ts,tsx}",
       "!src/**/*.d.ts",
       "!src/**/__tests__/**",
-      "!src/**/index.ts"
+      "!src/**/index.ts",
+      "!src/services/api/**"
     ],
     "coverageReporters": [
       "text-summary",

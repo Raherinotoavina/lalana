@@ -38,6 +38,8 @@ jobs:
         run: npm run typecheck
       - name: Format
         run: npm run format:check
+      - name: Generated API client is up to date
+        run: npm run api:check
       # Jest itself fails below the thresholds in package.json (80 % on every metric).
       - name: Tests with coverage
         run: npm run test:coverage -- --ci
@@ -56,6 +58,44 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+  api:
+    name: API
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: api/global.json
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Restore tools
+        run: dotnet tool restore --tool-manifest api/dotnet-tools.json
+      - name: Format
+        run: dotnet format api/Lalana.slnx --verify-no-changes
+      - name: Build (warnings are errors)
+        run: dotnet build api/Lalana.slnx --warnaserror
+      - name: OpenAPI document is up to date
+        run: git diff --exit-code -- api/openapi
+      # Unit and integration tests (Testcontainers builds the PostGIS image), merged coverage,
+      # and a gate that fails below 80 % lines or branches.
+      - name: Tests with coverage (80 %)
+        run: sh scripts/api-coverage.sh
+      - name: Coverage summary
+        if: always() && hashFiles('api/TestResults/coverage/SummaryGithub.md') != ''
+        run: cat api/TestResults/coverage/SummaryGithub.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-coverage
+          path: api/TestResults/coverage
+          retention-days: 7
+          if-no-files-found: ignore
+      - name: Docker image builds
+        run: docker build --tag lalana-api:ci api
+
   scripts:
     name: Repository scripts
     runs-on: ubuntu-latest
@@ -71,7 +111,7 @@ jobs:
   ci-ok:
     name: CI OK
     if: always()
-    needs: [mobile, scripts]
+    needs: [mobile, api, scripts]
     runs-on: ubuntu-latest
     timeout-minutes: 2
     steps:

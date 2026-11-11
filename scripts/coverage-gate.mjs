@@ -1,23 +1,39 @@
 // Fails when any coverage metric of one project is below the threshold, and writes a
 // Markdown table (to the GitHub job summary when GITHUB_STEP_SUMMARY is set).
 //
-// Usage: node scripts/coverage-gate.mjs <coverage-summary.json> <project label> [threshold]
-// The summary file is Istanbul's "json-summary" report (Jest: coverageReporters).
+// Usage: node scripts/coverage-gate.mjs <summary.json> <project label> [threshold]
+// Accepts Istanbul's "json-summary" report (Jest: statements, branches, functions, lines)
+// and ReportGenerator's "JsonSummary" report (.NET: lines and branches).
 import { appendFileSync, readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 export const METRICS = ['statements', 'branches', 'functions', 'lines'];
 export const DEFAULT_THRESHOLD = 80;
 
+const REPORTGENERATOR_METRICS = { lines: 'linecoverage', branches: 'branchcoverage' };
+
+/** Percentages by metric name, from either report format. */
+export function percentages(summary) {
+  if (summary?.total) {
+    return METRICS.map((metric) => {
+      const pct = summary.total[metric]?.pct;
+      if (typeof pct !== 'number') throw new Error(`Coverage summary has no "${metric}" percentage.`);
+      return [metric, pct];
+    });
+  }
+  if (summary?.summary) {
+    return Object.entries(REPORTGENERATOR_METRICS).map(([metric, key]) => {
+      const pct = summary.summary[key];
+      if (typeof pct !== 'number') throw new Error(`Coverage summary has no "${key}" percentage.`);
+      return [metric, pct];
+    });
+  }
+  throw new Error('Coverage summary has no "total" section (Istanbul) or "summary" section (ReportGenerator).');
+}
+
 /** Returns one row per metric with its percentage and whether it passes. */
 export function evaluate(summary, threshold = DEFAULT_THRESHOLD) {
-  const total = summary?.total;
-  if (!total) throw new Error('Coverage summary has no "total" section.');
-  return METRICS.map((metric) => {
-    const pct = total[metric]?.pct;
-    if (typeof pct !== 'number') throw new Error(`Coverage summary has no "${metric}" percentage.`);
-    return { metric, pct, passed: pct >= threshold };
-  });
+  return percentages(summary).map(([metric, pct]) => ({ metric, pct, passed: pct >= threshold }));
 }
 
 export function toMarkdown(label, rows, threshold = DEFAULT_THRESHOLD) {
