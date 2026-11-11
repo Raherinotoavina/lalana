@@ -47,7 +47,7 @@ describe('Button', () => {
     expect(screen.getByRole('button', { name: 'Google' })).toBeEnabled();
   });
 
-  it('uses the white onAccent label on the primary action and ink on the ghost button', async () => {
+  it('uses the indigo onAccent label on the primary action and ink on the ghost button', async () => {
     await render(
       <>
         <Button label="Se connecter" onPress={jest.fn()} />
