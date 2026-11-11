@@ -21,7 +21,9 @@ internal sealed class MessagingOptionsValidator(IHostEnvironment environment) : 
 
     public ValidateOptionsResult Validate(string? name, MessagingOptions options)
     {
-        var provider = options.Provider ?? (AllowsDevelopmentProvider(environment) ? MessagingOptions.Development : null);
+        // An empty value (Compose passes MESSAGING_PROVIDER= as "") means "not set".
+        var provider = string.IsNullOrWhiteSpace(options.Provider) ? null : options.Provider;
+        provider ??= (AllowsDevelopmentProvider(environment) ? MessagingOptions.Development : null);
         return provider switch
         {
             MessagingOptions.Development when AllowsDevelopmentProvider(environment) => ValidateOptionsResult.Success,

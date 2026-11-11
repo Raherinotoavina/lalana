@@ -95,6 +95,9 @@ public sealed class StartupTests(PostgisDatabase database)
         (Failure("Staging", MessagingOptions.Development) ?? string.Empty).ShouldContain("refused outside Development");
         Failure("Testing", null).ShouldBeNull();
         Failure("Development", MessagingOptions.Development).ShouldBeNull();
+        Failure("Development", "").ShouldBeNull();
+        Failure("Testing", " ").ShouldBeNull();
+        (Failure("Production", "") ?? string.Empty).ShouldContain("Messaging:Provider is not set");
     }
 
     private static HostingEnvironment Environment(string name) => new() { EnvironmentName = name };
