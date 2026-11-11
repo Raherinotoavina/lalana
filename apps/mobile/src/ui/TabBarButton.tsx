@@ -11,7 +11,7 @@ export type TabBarButtonProps = Omit<TabTriggerSlotProps, 'ref'> & {
   ref?: Ref<ComponentRef<typeof Pressable>>;
   label: string;
   icon: Icon;
-  /** The centre "+" button: yellow "spark" square, no visible label. */
+  /** The centre "+" button: accent square, no visible label. */
   variant?: 'default' | 'publish';
 };
 
@@ -24,7 +24,7 @@ export function TabBarButton({
   ref,
   ...pressableProps
 }: TabBarButtonProps) {
-  const color = isFocused ? colors.spark : colors.tabInactive;
+  const color = isFocused ? colors.accent : colors.tabInactive;
   return (
     <Pressable
       {...pressableProps}
@@ -36,7 +36,7 @@ export function TabBarButton({
     >
       {variant === 'publish' ? (
         <View style={[styles.publish, isFocused && styles.publishFocused]}>
-          <IconComponent color={colors.onSpark} size={iconDefaults.size} strokeWidth={2.4} />
+          <IconComponent color={colors.onAccent} size={iconDefaults.size} strokeWidth={2.4} />
         </View>
       ) : (
         <>
@@ -63,9 +63,9 @@ const styles = StyleSheet.create({
     height: tabBar.publishSize,
     minWidth: minTouchTarget,
     borderRadius: radii.lg,
-    backgroundColor: colors.spark,
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  publishFocused: { backgroundColor: colors.sparkPressed },
+  publishFocused: { backgroundColor: colors.accentPressed },
 });
