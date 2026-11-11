@@ -27,7 +27,7 @@ export function Logo({ withWordmark = true, size = 38 }: LogoProps) {
           height={glyph}
           viewBox="0 0 24 24"
           fill="none"
-          stroke={colors.ink}
+          stroke={colors.onSpark}
           strokeWidth={2.4}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -48,6 +48,6 @@ export function Logo({ withWordmark = true, size = 38 }: LogoProps) {
 
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm + 2 },
-  mark: { backgroundColor: colors.accent, alignItems: 'center', justifyContent: 'center' },
+  mark: { backgroundColor: colors.spark, alignItems: 'center', justifyContent: 'center' },
   wordmark: { fontSize: 23, lineHeight: 28, letterSpacing: -0.69 },
 });

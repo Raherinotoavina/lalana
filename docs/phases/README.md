@@ -6,7 +6,8 @@ acceptance criterion is verified, including manual checks on a native build; a m
 pull request alone does not complete it.
 
 Design board: Claude Design canvas "Covoiturage — Maquette V1"
-(https://claude.ai/artifact/AeiqLeQhtQeiZi2e6Pevty). Palette "Nuit + Soleil".
+(https://claude.ai/artifact/AeiqLeQhtQeiZi2e6Pevty). Palette "Lagon + Soleil"
+(tokens in `apps/mobile/src/theme/tokens.ts`).
 Architecture, stack, and mandatory rules: [../architecture.md](../architecture.md).
 
 V1 uses an Expo mobile app and a C# / ASP.NET Core API that owns every business rule

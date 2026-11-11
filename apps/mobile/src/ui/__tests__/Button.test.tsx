@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Text } from 'react-native';
 
+import { colors } from '@/theme/tokens';
+
 import { Button } from '../Button';
 
 describe('Button', () => {
@@ -43,5 +45,18 @@ describe('Button', () => {
     );
     expect(screen.getByText('G')).toBeOnTheScreen();
     expect(screen.getByRole('button', { name: 'Google' })).toBeEnabled();
+  });
+
+  it('uses white text on the primary action and ink on the ghost button', async () => {
+    await render(
+      <>
+        <Button label="Se connecter" onPress={jest.fn()} />
+        <Button label="Continuer avec Google" variant="ghost" onPress={jest.fn()} />
+        <Button label="Vérifier" onPress={jest.fn()} disabled />
+      </>,
+    );
+    expect(screen.getByText('Se connecter')).toHaveStyle({ color: colors.onAccent });
+    expect(screen.getByText('Continuer avec Google')).toHaveStyle({ color: colors.ink });
+    expect(screen.getByText('Vérifier')).toHaveStyle({ color: colors.muted });
   });
 });

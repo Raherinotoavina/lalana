@@ -12,7 +12,7 @@ register vehicles with photos, reused on every trip they publish.
 ## Conversation context and prior decisions
 
 - Profile layout from the board: cover, large rounded-square avatar, name with
-  verified badge, short bio, "Message" (yellow) and "Noter" buttons, stats (rating,
+  verified badge, short bio, "Message" (primary action) and "Noter" buttons, stats (rating,
   trips offered, trips taken), vehicle, member since, reviews section.
 - A vehicle has a type (voiture, moto, scooter), brand and model, colour, photos.
 - Vehicles are entered the first time a member publishes an offer, then remembered.
