@@ -16,15 +16,17 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 - Stack agreed on 2026-11-09: Expo mobile app + C# / ASP.NET Core API from V1, then
   the same day self-hosted instead of Supabase (PostgreSQL + PostGIS, ASP.NET Core
   Identity, photo storage, all in Docker). See [architecture](../architecture.md).
-- Palette "Lagon + Soleil" (chosen 2026-11-11 on the board's "Palettes V2" artboard,
-  replacing "Nuit + Soleil"): primary `#073B42`, primary action `#0A7C78` with white
-  text, link `#0A6460`, yellow spark `#FFD23F` (logo, "+" tab, buttons on dark
-  surfaces only), ink `#0F1F22`, background `#F5F4EF`, muted `#55636A`. The yellow
-  button was dropped because it barely stood out from the light background (1.3:1);
-  the teal one reaches 4.6:1. Font Plus Jakarta Sans. Avatars are rounded squares; the
-  tab bar is a dark floating bar with a yellow "+" in the centre.
+- Palette "Forêt humide + Fougère" (chosen 2026-11-11 on the board's "Palettes V5"
+  artboard, after "Nuit + Soleil" and a short-lived "Lagon + Soleil"): the owner wanted
+  a palette inspired by nature, in the spirit of a deep brand colour with one luminous
+  accent. Primary and links `#163B2C` (forest), accent `#B6E36C` (fern) with dark
+  label `#11291F` for the primary action, the logo and the "+" tab, tab bar `#0F261D`,
+  ink `#13221B`, background `#F3F5F0`, muted `#56645B`. The accent's edge is soft on
+  the light background (1.35:1); its dark label (10.4:1) carries it, and it shines on
+  forest and dark surfaces (8.4:1). Font Plus Jakarta Sans. Avatars are rounded
+  squares; the tab bar is a dark floating bar with a fern "+" in the centre.
 - UX is inspired by Facebook; the UI must not look like Facebook. Simplicity first:
-  one primary call to action per screen (teal on light backgrounds).
+  one primary call to action per screen (fern with a dark label).
 - Android first; low-end devices and 3G/4G networks.
 - Server state on the mobile app goes through TanStack Query over the generated API
   client (decided 2026-11-09); see architecture rule 3. The query client is set up in
