@@ -16,17 +16,18 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 - Stack agreed on 2026-11-09: Expo mobile app + C# / ASP.NET Core API from V1, then
   the same day self-hosted instead of Supabase (PostgreSQL + PostGIS, ASP.NET Core
   Identity, photo storage, all in Docker). See [architecture](../architecture.md).
-- Palette "Forêt humide + Fougère" (chosen 2026-11-11 on the board's "Palettes V5"
-  artboard, after "Nuit + Soleil" and a short-lived "Lagon + Soleil"): the owner wanted
-  a palette inspired by nature, in the spirit of a deep brand colour with one luminous
-  accent. Primary and links `#163B2C` (forest), accent `#B6E36C` (fern) with dark
-  label `#11291F` for the primary action, the logo and the "+" tab, tab bar `#0F261D`,
-  ink `#13221B`, background `#F3F5F0`, muted `#56645B`. The accent's edge is soft on
-  the light background (1.35:1); its dark label (10.4:1) carries it, and it shines on
-  forest and dark surfaces (8.4:1). Font Plus Jakarta Sans. Avatars are rounded
-  squares; the tab bar is a dark floating bar with a fern "+" in the centre.
+- Palette "Électrique" (final choice, 2026-11-11, on the board's "Couleurs" artboard,
+  after many rounds: "Nuit + Soleil", "Lagon + Soleil", "Latérite + Sable", "Forêt
+  humide + Fougère", "Cobalt + Papier", "Ciel + Ocre"): white surfaces, ink text
+  `#121218` on background `#F6F6F9`, one electric blue `#4253FF` for brand surfaces,
+  the primary action, the logo and the "+" tab, always with a white label (5.4:1); it
+  stands out from the light background (5.0:1). Links `#2E3BE0`, muted `#5C5D6B`, ink
+  tab bar with a white active tab. Lime green was ruled out because it is inDrive's
+  colour in the same sector, and bright orange because it is the Orange operator's.
+  Font Plus Jakarta Sans. Avatars are rounded squares; the tab bar is a dark floating
+  bar with a blue "+" in the centre.
 - UX is inspired by Facebook; the UI must not look like Facebook. Simplicity first:
-  one primary call to action per screen (fern with a dark label).
+  one primary call to action per screen (electric blue with a white label).
 - Android first; low-end devices and 3G/4G networks.
 - Server state on the mobile app goes through TanStack Query over the generated API
   client (decided 2026-11-09); see architecture rule 3. The query client is set up in

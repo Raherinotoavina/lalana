@@ -11,7 +11,7 @@ export type LogoProps = {
   size?: number;
 };
 
-/** The lalana mark: a winding road between two points, on a fern-green rounded square. */
+/** The lalana mark: a winding road between two points, on an electric-blue rounded square. */
 export function Logo({ withWordmark = true, size = 38 }: LogoProps) {
   const glyph = Math.round(size * 0.58);
   return (
