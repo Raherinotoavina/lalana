@@ -2,9 +2,8 @@
 
 ## Status
 
-In progress — code and checks on branch `feat/01-repository-and-mobile-foundation`
-(pull request open). Remaining: run the app on an Android development build and
-compare the tab bar with the board; first green CI run.
+In progress — merged into `main`; CI passes on `main` (checked 2026-11-11). Remaining:
+run the app on an Android development build and compare the tab bar with the board.
 
 ## Objective
 
@@ -85,8 +84,8 @@ quality gates (tests, coverage, hooks, CI) that every later phase relies on.
 
 - [ ] The app runs on an Android development build and shows the tab bar shell
   matching the board.
-- [ ] Lint, typecheck, and Jest with coverage ≥ 80 % pass locally and in CI. Local:
-  passing (100 % statements, functions and lines, 91 % branches). CI: pending first run.
+- [x] Lint, typecheck, and Jest with coverage ≥ 80 % pass locally and in CI (green on
+  `main`, 2026-11-11).
 - [x] Importing `@supabase/supabase-js` outside the auth service fails lint (rule
   tightened on 2026-11-09, see Scope).
 - [x] The pre-push hook runs the complete validation suite.

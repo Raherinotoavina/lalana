@@ -41,13 +41,518 @@
           }
         ]
       }
+    },
+    "/profiles/bootstrap": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Creates the caller's profile once; later calls return the same profile.",
+        "operationId": "BootstrapProfile",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BootstrapProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProfileResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/me/identifiers": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Sends a code to a phone or e-mail to add to the account or to replace the current one.",
+        "operationId": "RequestIdentifierChange",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeIdentifierRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/me/identifiers/confirm": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Confirms the code and saves the new phone or e-mail.",
+        "operationId": "ConfirmIdentifierChange",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmCodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer": [ ]
+          }
+        ]
+      }
+    },
+    "/auth/sign-up": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Creates an account and sends a confirmation code (SMS when a phone is given, else e-mail).",
+        "operationId": "SignUp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignUpRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/codes": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Sends a new confirmation code for an unconfirmed phone or e-mail.",
+        "operationId": "SendConfirmationCode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendCodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/confirm": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Confirms the phone or e-mail the code was sent to and signs the member in.",
+        "operationId": "ConfirmCode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmCodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/sign-in": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Signs in with a confirmed phone or e-mail and the password.",
+        "operationId": "SignIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignInRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Exchanges a refresh token for new tokens; an old token ends the session.",
+        "operationId": "RefreshSession",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/sign-out": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Ends the session of this refresh token.",
+        "operationId": "SignOut",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/auth/password/forgot": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Sends a reset code; the answer is the same whether or not an account exists.",
+        "operationId": "ForgotPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerificationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/password/verify": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Checks the reset code and returns a ticket for the new password.",
+        "operationId": "VerifyResetCode",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmCodeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResetTicketResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/password/reset": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Sets the new password, ends the other sessions and signs the member in.",
+        "operationId": "ResetPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "BootstrapProfileRequest": {
+        "required": [
+          "firstName",
+          "lastName"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Prénom."
+          },
+          "lastName": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Nom."
+          }
+        },
+        "description": "Names for the profile; when empty, the names given at sign-up are used."
+      },
+      "ChangeIdentifierRequest": {
+        "required": [
+          "identifier"
+        ],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Phone or e-mail."
+          }
+        },
+        "description": "A phone or e-mail to add to the account, or to use instead of the current one."
+      },
+      "CodeChannel": {
+        "enum": [
+          "sms",
+          "email"
+        ],
+        "description": "Where a code was sent."
+      },
+      "ConfirmCodeRequest": {
+        "required": [
+          "verificationId",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "verificationId": {
+            "type": "string",
+            "description": "From the response that sent the code.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The 6 digits."
+          }
+        },
+        "description": "A code typed by the member."
+      },
+      "ForgotPasswordRequest": {
+        "required": [
+          "identifier"
+        ],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Phone or e-mail."
+          }
+        },
+        "description": "Starts a password reset."
+      },
       "MeResponse": {
         "required": [
-          "id"
+          "id",
+          "firstName",
+          "lastName",
+          "phone",
+          "phoneConfirmed",
+          "email",
+          "emailConfirmed",
+          "hasProfile"
         ],
         "type": "object",
         "properties": {
@@ -55,6 +560,40 @@
             "type": "string",
             "description": "The member's id.",
             "format": "uuid"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Prénom."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Nom."
+          },
+          "phone": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "E.164 phone number, if any."
+          },
+          "phoneConfirmed": {
+            "type": "boolean",
+            "description": "Whether the phone was confirmed by a code."
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "E-mail address, if any."
+          },
+          "emailConfirmed": {
+            "type": "boolean",
+            "description": "Whether the e-mail was confirmed by a code."
+          },
+          "hasProfile": {
+            "type": "boolean",
+            "description": "False until the profile is created (POST /profiles/bootstrap)."
           }
         },
         "description": "The caller's account."
@@ -96,6 +635,267 @@
             ]
           }
         }
+      },
+      "ProfileResponse": {
+        "required": [
+          "id",
+          "firstName",
+          "lastName",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "The member's id.",
+            "format": "uuid"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Prénom."
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Nom."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "When the profile was created.",
+            "format": "date-time"
+          }
+        },
+        "description": "A member's public profile."
+      },
+      "RefreshRequest": {
+        "required": [
+          "refreshToken"
+        ],
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The refresh token."
+          }
+        },
+        "description": "A refresh token to exchange or revoke."
+      },
+      "ResetPasswordRequest": {
+        "required": [
+          "resetTicket",
+          "newPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "resetTicket": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "From the code check."
+          },
+          "newPassword": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "8 characters or more, including a digit."
+          }
+        },
+        "description": "The new password."
+      },
+      "ResetTicketResponse": {
+        "required": [
+          "resetTicket",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "resetTicket": {
+            "type": "string",
+            "description": "Pass it to the reset call."
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "When it stops working.",
+            "format": "date-time"
+          }
+        },
+        "description": "Allows choosing the new password, once."
+      },
+      "SendCodeRequest": {
+        "required": [
+          "identifier",
+          "channel"
+        ],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Phone or e-mail of the account."
+          },
+          "channel": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "description": "Send to the account's e-mail instead of its phone (or the reverse); defaults to the identifier's own kind.",
+                "$ref": "#/components/schemas/CodeChannel"
+              }
+            ]
+          }
+        },
+        "description": "Asks a new confirmation code for an unconfirmed phone or e-mail."
+      },
+      "SessionResponse": {
+        "required": [
+          "userId",
+          "accessToken",
+          "accessTokenExpiresAt",
+          "refreshToken",
+          "refreshTokenExpiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "The member's id.",
+            "format": "uuid"
+          },
+          "accessToken": {
+            "type": "string",
+            "description": "Bearer token for API calls (short-lived)."
+          },
+          "accessTokenExpiresAt": {
+            "type": "string",
+            "description": "When to refresh.",
+            "format": "date-time"
+          },
+          "refreshToken": {
+            "type": "string",
+            "description": "Single use: exchange it for new tokens; keep it in secure storage."
+          },
+          "refreshTokenExpiresAt": {
+            "type": "string",
+            "description": "When the member must sign in again.",
+            "format": "date-time"
+          }
+        },
+        "description": "The member is signed in."
+      },
+      "SignInRequest": {
+        "required": [
+          "identifier",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "\"Téléphone ou email\"."
+          },
+          "password": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The password."
+          }
+        },
+        "description": "Sign-in with a phone or an e-mail and the password."
+      },
+      "SignUpRequest": {
+        "required": [
+          "firstName",
+          "lastName",
+          "phone",
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Prénom."
+          },
+          "lastName": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Nom."
+          },
+          "phone": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Malagasy mobile number, local (034 12 345 67) or +261 form. Optional if Email is set."
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "E-mail address. Optional if Phone is set."
+          },
+          "password": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "8 characters or more, including a digit."
+          }
+        },
+        "description": "Sign-up: names, at least one of phone and e-mail, and a password."
+      },
+      "VerificationResponse": {
+        "required": [
+          "verificationId",
+          "channel",
+          "maskedDestination",
+          "resendAvailableAt",
+          "expiresAt"
+        ],
+        "type": "object",
+        "properties": {
+          "verificationId": {
+            "type": "string",
+            "description": "Send it back with the code.",
+            "format": "uuid"
+          },
+          "channel": {
+            "description": "SMS or e-mail.",
+            "$ref": "#/components/schemas/CodeChannel"
+          },
+          "maskedDestination": {
+            "type": "string",
+            "description": "For example \"+261 34 ** *** 67\" or \"s***@exemple.com\"."
+          },
+          "resendAvailableAt": {
+            "type": "string",
+            "description": "When another code may be asked.",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "When this code stops working.",
+            "format": "date-time"
+          }
+        },
+        "description": "A code was sent (or, for a password reset, would have been sent)."
       }
     },
     "securitySchemes": {
@@ -109,6 +909,9 @@
   "tags": [
     {
       "name": "Account"
+    },
+    {
+      "name": "Auth"
     }
   ]
 }

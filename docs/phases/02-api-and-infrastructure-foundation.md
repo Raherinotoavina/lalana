@@ -2,8 +2,8 @@
 
 ## Status
 
-In progress — on branch `feat/02-api-and-infrastructure-foundation`. Everything is
-built and tested locally; deployment waits until a VPS is rented.
+In progress — merged into `main`; CI passes on `main` (checked 2026-11-11). Only the
+deployment remains, and it waits until a VPS is rented.
 
 ## Objective
 
@@ -69,8 +69,7 @@ locally today and on a small VPS later.
 - [x] Add unit and integration test projects with Testcontainers (multi-architecture
   PostGIS image built from `postgres:17` and Debian's PostGIS package).
 - [x] Add the API CI job (format, build, tests, coverage gate, OpenAPI drift, image
-  build) and the C# pre-commit checks. Not run on GitHub yet: Actions does not start on
-  this repository (see the CI pull request).
+  build) and the C# pre-commit checks. Green on `main` since 2026-11-11.
 - [x] Add the Dockerfile (chiseled runtime image, about 200 MB) and the local Docker
   Compose stack; document secrets and environments (`api/.env.example`, README).
 - [ ] Later, when the VPS exists: Compose with Caddy, deploy from `main`, migrations in
@@ -84,8 +83,8 @@ locally today and on a small VPS later.
   it is down.
 - [x] The mobile app calls `GET /me` through the generated client (tested with a fake
   `fetch`; a real call needs the tokens of Phase 03).
-- [ ] Format, build, tests, and coverage ≥ 80 % pass locally and in CI. Local: passing
-  (API 98.7 % lines, 88.8 % branches; 31 tests). CI: blocked until Actions starts.
+- [x] Format, build, tests, and coverage ≥ 80 % pass locally and in CI (green on `main`,
+  2026-11-11).
 - [x] `docker compose up` starts the database and the API locally.
 - [ ] Later: a merge to `main` deploys staging on the VPS and applies migrations.
 

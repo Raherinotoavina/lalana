@@ -31,7 +31,9 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
       ConnectionStrings__Lalana: Host=db;Database=lalana;Username=lalana;Password=${POSTGRES_PASSWORD}
       Database__MigrateOnStartup: "true"
-      Auth__SigningPublicKeyPem: ${AUTH_SIGNING_PUBLIC_KEY_PEM:-}
+      Auth__SigningKeyPem: ${AUTH_SIGNING_KEY_PEM:-}
+      Auth__CodeHashKey: ${AUTH_CODE_HASH_KEY:-}
+      Messaging__Provider: ${MESSAGING_PROVIDER:-}
     ports:
       - "5080:8080"
 

@@ -17,9 +17,9 @@ all self-hosted in Docker: locally during development, on one small VPS later
 
 ## V1 roadmap
 
-1. [Repository and mobile foundation](./01-repository-and-mobile-foundation.md) — in progress.
-2. [API and infrastructure foundation](./02-api-and-infrastructure-foundation.md) — in progress.
-3. [Authentication](./03-authentication.md) — not started.
+1. [Repository and mobile foundation](./01-repository-and-mobile-foundation.md) — in progress (Android build check left).
+2. [API and infrastructure foundation](./02-api-and-infrastructure-foundation.md) — in progress (VPS deployment left).
+3. [Authentication](./03-authentication.md) — in progress (API done; mobile screens, Google and providers next).
 4. [Profiles and vehicles](./04-profiles-and-vehicles.md) — not started.
 5. [Places and publishing](./05-places-and-publishing.md) — not started.
 6. [Feed, search, and trip detail](./06-feed-search-and-trip-detail.md) — not started.

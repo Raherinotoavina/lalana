@@ -5,6 +5,59 @@ export type ClientOptions = {
 };
 
 /**
+ * Names for the profile; when empty, the names given at sign-up are used.
+ */
+export type BootstrapProfileRequest = {
+    /**
+     * Prénom.
+     */
+    firstName: null | string;
+    /**
+     * Nom.
+     */
+    lastName: null | string;
+};
+
+/**
+ * A phone or e-mail to add to the account, or to use instead of the current one.
+ */
+export type ChangeIdentifierRequest = {
+    /**
+     * Phone or e-mail.
+     */
+    identifier: null | string;
+};
+
+/**
+ * Where a code was sent.
+ */
+export type CodeChannel = 'sms' | 'email';
+
+/**
+ * A code typed by the member.
+ */
+export type ConfirmCodeRequest = {
+    /**
+     * From the response that sent the code.
+     */
+    verificationId: string;
+    /**
+     * The 6 digits.
+     */
+    code: null | string;
+};
+
+/**
+ * Starts a password reset.
+ */
+export type ForgotPasswordRequest = {
+    /**
+     * Phone or e-mail.
+     */
+    identifier: null | string;
+};
+
+/**
  * The caller's account.
  */
 export type MeResponse = {
@@ -12,6 +65,34 @@ export type MeResponse = {
      * The member's id.
      */
     id: string;
+    /**
+     * Prénom.
+     */
+    firstName: string;
+    /**
+     * Nom.
+     */
+    lastName: string;
+    /**
+     * E.164 phone number, if any.
+     */
+    phone: null | string;
+    /**
+     * Whether the phone was confirmed by a code.
+     */
+    phoneConfirmed: boolean;
+    /**
+     * E-mail address, if any.
+     */
+    email: null | string;
+    /**
+     * Whether the e-mail was confirmed by a code.
+     */
+    emailConfirmed: boolean;
+    /**
+     * False until the profile is created (POST /profiles/bootstrap).
+     */
+    hasProfile: boolean;
 };
 
 export type ProblemDetails = {
@@ -20,6 +101,169 @@ export type ProblemDetails = {
     status?: null | number | string;
     detail?: null | string;
     instance?: null | string;
+};
+
+/**
+ * A member's public profile.
+ */
+export type ProfileResponse = {
+    /**
+     * The member's id.
+     */
+    id: string;
+    /**
+     * Prénom.
+     */
+    firstName: string;
+    /**
+     * Nom.
+     */
+    lastName: string;
+    /**
+     * When the profile was created.
+     */
+    createdAt: string;
+};
+
+/**
+ * A refresh token to exchange or revoke.
+ */
+export type RefreshRequest = {
+    /**
+     * The refresh token.
+     */
+    refreshToken: null | string;
+};
+
+/**
+ * The new password.
+ */
+export type ResetPasswordRequest = {
+    /**
+     * From the code check.
+     */
+    resetTicket: null | string;
+    /**
+     * 8 characters or more, including a digit.
+     */
+    newPassword: null | string;
+};
+
+/**
+ * Allows choosing the new password, once.
+ */
+export type ResetTicketResponse = {
+    /**
+     * Pass it to the reset call.
+     */
+    resetTicket: string;
+    /**
+     * When it stops working.
+     */
+    expiresAt: string;
+};
+
+/**
+ * Asks a new confirmation code for an unconfirmed phone or e-mail.
+ */
+export type SendCodeRequest = {
+    /**
+     * Phone or e-mail of the account.
+     */
+    identifier: null | string;
+    channel: null | CodeChannel;
+};
+
+/**
+ * The member is signed in.
+ */
+export type SessionResponse = {
+    /**
+     * The member's id.
+     */
+    userId: string;
+    /**
+     * Bearer token for API calls (short-lived).
+     */
+    accessToken: string;
+    /**
+     * When to refresh.
+     */
+    accessTokenExpiresAt: string;
+    /**
+     * Single use: exchange it for new tokens; keep it in secure storage.
+     */
+    refreshToken: string;
+    /**
+     * When the member must sign in again.
+     */
+    refreshTokenExpiresAt: string;
+};
+
+/**
+ * Sign-in with a phone or an e-mail and the password.
+ */
+export type SignInRequest = {
+    /**
+     * "Téléphone ou email".
+     */
+    identifier: null | string;
+    /**
+     * The password.
+     */
+    password: null | string;
+};
+
+/**
+ * Sign-up: names, at least one of phone and e-mail, and a password.
+ */
+export type SignUpRequest = {
+    /**
+     * Prénom.
+     */
+    firstName: null | string;
+    /**
+     * Nom.
+     */
+    lastName: null | string;
+    /**
+     * Malagasy mobile number, local (034 12 345 67) or +261 form. Optional if Email is set.
+     */
+    phone: null | string;
+    /**
+     * E-mail address. Optional if Phone is set.
+     */
+    email: null | string;
+    /**
+     * 8 characters or more, including a digit.
+     */
+    password: null | string;
+};
+
+/**
+ * A code was sent (or, for a password reset, would have been sent).
+ */
+export type VerificationResponse = {
+    /**
+     * Send it back with the code.
+     */
+    verificationId: string;
+    /**
+     * SMS or e-mail.
+     */
+    channel: CodeChannel;
+    /**
+     * For example "+261 34 ** *** 67" or "s***@exemple.com".
+     */
+    maskedDestination: string;
+    /**
+     * When another code may be asked.
+     */
+    resendAvailableAt: string;
+    /**
+     * When this code stops working.
+     */
+    expiresAt: string;
 };
 
 export type GetMeData = {
@@ -46,3 +290,226 @@ export type GetMeResponses = {
 };
 
 export type GetMeResponse = GetMeResponses[keyof GetMeResponses];
+
+export type BootstrapProfileData = {
+    body: BootstrapProfileRequest;
+    path?: never;
+    query?: never;
+    url: '/profiles/bootstrap';
+};
+
+export type BootstrapProfileErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ProblemDetails;
+};
+
+export type BootstrapProfileError = BootstrapProfileErrors[keyof BootstrapProfileErrors];
+
+export type BootstrapProfileResponses = {
+    /**
+     * OK
+     */
+    200: ProfileResponse;
+    /**
+     * Created
+     */
+    201: ProfileResponse;
+};
+
+export type BootstrapProfileResponse = BootstrapProfileResponses[keyof BootstrapProfileResponses];
+
+export type RequestIdentifierChangeData = {
+    body: ChangeIdentifierRequest;
+    path?: never;
+    query?: never;
+    url: '/me/identifiers';
+};
+
+export type RequestIdentifierChangeErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ProblemDetails;
+};
+
+export type RequestIdentifierChangeError = RequestIdentifierChangeErrors[keyof RequestIdentifierChangeErrors];
+
+export type RequestIdentifierChangeResponses = {
+    /**
+     * OK
+     */
+    200: VerificationResponse;
+};
+
+export type RequestIdentifierChangeResponse = RequestIdentifierChangeResponses[keyof RequestIdentifierChangeResponses];
+
+export type ConfirmIdentifierChangeData = {
+    body: ConfirmCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/me/identifiers/confirm';
+};
+
+export type ConfirmIdentifierChangeErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ProblemDetails;
+};
+
+export type ConfirmIdentifierChangeError = ConfirmIdentifierChangeErrors[keyof ConfirmIdentifierChangeErrors];
+
+export type ConfirmIdentifierChangeResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type ConfirmIdentifierChangeResponse = ConfirmIdentifierChangeResponses[keyof ConfirmIdentifierChangeResponses];
+
+export type SignUpData = {
+    body: SignUpRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/sign-up';
+};
+
+export type SignUpResponses = {
+    /**
+     * Created
+     */
+    201: VerificationResponse;
+};
+
+export type SignUpResponse = SignUpResponses[keyof SignUpResponses];
+
+export type SendConfirmationCodeData = {
+    body: SendCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/codes';
+};
+
+export type SendConfirmationCodeResponses = {
+    /**
+     * OK
+     */
+    200: VerificationResponse;
+};
+
+export type SendConfirmationCodeResponse = SendConfirmationCodeResponses[keyof SendConfirmationCodeResponses];
+
+export type ConfirmCodeData = {
+    body: ConfirmCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/confirm';
+};
+
+export type ConfirmCodeResponses = {
+    /**
+     * OK
+     */
+    200: SessionResponse;
+};
+
+export type ConfirmCodeResponse = ConfirmCodeResponses[keyof ConfirmCodeResponses];
+
+export type SignInData = {
+    body: SignInRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/sign-in';
+};
+
+export type SignInResponses = {
+    /**
+     * OK
+     */
+    200: SessionResponse;
+};
+
+export type SignInResponse = SignInResponses[keyof SignInResponses];
+
+export type RefreshSessionData = {
+    body: RefreshRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/refresh';
+};
+
+export type RefreshSessionResponses = {
+    /**
+     * OK
+     */
+    200: SessionResponse;
+};
+
+export type RefreshSessionResponse = RefreshSessionResponses[keyof RefreshSessionResponses];
+
+export type SignOutData = {
+    body: RefreshRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/sign-out';
+};
+
+export type SignOutResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type SignOutResponse = SignOutResponses[keyof SignOutResponses];
+
+export type ForgotPasswordData = {
+    body: ForgotPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/password/forgot';
+};
+
+export type ForgotPasswordResponses = {
+    /**
+     * OK
+     */
+    200: VerificationResponse;
+};
+
+export type ForgotPasswordResponse = ForgotPasswordResponses[keyof ForgotPasswordResponses];
+
+export type VerifyResetCodeData = {
+    body: ConfirmCodeRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/password/verify';
+};
+
+export type VerifyResetCodeResponses = {
+    /**
+     * OK
+     */
+    200: ResetTicketResponse;
+};
+
+export type VerifyResetCodeResponse = VerifyResetCodeResponses[keyof VerifyResetCodeResponses];
+
+export type ResetPasswordData = {
+    body: ResetPasswordRequest;
+    path?: never;
+    query?: never;
+    url: '/auth/password/reset';
+};
+
+export type ResetPasswordResponses = {
+    /**
+     * OK
+     */
+    200: SessionResponse;
+};
+
+export type ResetPasswordResponse = ResetPasswordResponses[keyof ResetPasswordResponses];

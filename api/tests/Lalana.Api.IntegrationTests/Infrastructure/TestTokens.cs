@@ -12,7 +12,11 @@ internal static class TestTokens
 
     private static readonly ECDsa SigningKey = ECDsa.Create(ECCurve.NamedCurves.nistP256);
 
-    public static string PublicKeyPem { get; } = SigningKey.ExportSubjectPublicKeyInfoPem();
+    /// <summary>The key the API under test signs with (and verifies), so tests can also mint tokens.</summary>
+    public static string PrivateKeyPem { get; } = SigningKey.ExportPkcs8PrivateKeyPem();
+
+    /// <summary>Base64 HMAC key for one-time codes.</summary>
+    public static string CodeHashKey { get; } = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
 
     public static string Create(
         string? subject = null,

@@ -2,7 +2,13 @@
 
 ## Status
 
-Not started
+In progress — delivered in three pull requests:
+
+1. **API** (branch `feat/03-authentication`): accounts, codes, sessions, password reset,
+   profile bootstrap, identifier change. Done, with fake SMS and e-mail senders.
+2. **Mobile**: auth screens from the board, session storage, refresh, route guard. Next.
+3. **Google and providers**: native Google sign-in, real SMS and e-mail providers. Needs
+   the Google Cloud OAuth clients and the provider accounts.
 
 ## Objective
 
@@ -100,18 +106,19 @@ create their profile in the API on first use.
   Airtel, price per SMS, fraud protection) and record the choice here.
 - [ ] Choose the transactional e-mail service (free tier) and write the French
   templates.
-- [ ] Add ASP.NET Core Identity with EF Core stores in schema `app` and its migration.
-- [ ] Implement one-time codes (hashing, expiry, attempts, rate limits) and the
+- [x] Add ASP.NET Core Identity with EF Core stores in schema `app` and its migration.
+- [x] Implement one-time codes (hashing, expiry, attempts, rate limits) and the
   sign-up, verification, sign-in, refresh, sign-out and reset endpoints.
-- [ ] Issue access and refresh tokens (signing key from configuration, rotation,
+- [x] Issue access and refresh tokens (signing key from configuration, rotation,
   revocation).
 - [ ] Build the auth screens from the board (single field at sign-in, two at sign-up).
-- [ ] Implement identifier parsing and phone normalization with unit tests.
+- [x] Implement identifier parsing and phone normalization with unit tests (API side;
+  the mobile app needs the same rules for instant feedback).
 - [ ] Implement the mobile auth service (token storage in `expo-secure-store`, refresh,
   sign-out) and the API client's authorization header.
 - [ ] Add native Google sign-in and verify the ID token in the API.
-- [ ] Add the profile bootstrap endpoint and its tests.
-- [ ] Add or change the phone or e-mail in the account settings.
+- [x] Add the profile bootstrap endpoint and its tests.
+- [ ] Add or change the phone or e-mail in the account settings (API done; screen next).
 - [ ] Add the route guard and session handling.
 
 ## Acceptance criteria
@@ -123,8 +130,8 @@ create their profile in the API on first use.
 - [ ] A number or e-mail already used shows a clear error at sign-up.
 - [ ] Password reset works from a phone number (SMS code) and from an e-mail.
 - [ ] Google sign-in works on an Android build and creates the profile once.
-- [ ] Calling bootstrap twice does not create two profiles.
-- [ ] Repeated code requests for the same number are rate-limited.
+- [x] Calling bootstrap twice does not create two profiles (also five concurrent calls).
+- [x] Repeated code requests for the same number are rate-limited.
 - [ ] The SMS code is offered by the keyboard (iOS) or SMS autofill (Android) and is
   submitted on its own at the sixth digit.
 - [ ] The reset screen shows the same message whether or not the account exists.
@@ -150,6 +157,49 @@ reset, Google with a test token, bootstrap idempotency and `GET /me`.
 - E-mail deliverability: use a verified sending domain before beta.
 
 ## Notes and decisions
+
+### API design (2026-11-11, pull request 1)
+
+- Endpoints, all anonymous under `/auth`: `POST /auth/sign-up` (201, sends the code),
+  `POST /auth/codes` (new confirmation code; `channel: "email"` sends it to the account's
+  e-mail when SMS does not arrive), `POST /auth/confirm` (confirms and signs in),
+  `POST /auth/sign-in`, `POST /auth/refresh`, `POST /auth/sign-out`,
+  `POST /auth/password/forgot`, `POST /auth/password/verify` (returns a reset ticket),
+  `POST /auth/password/reset` (sets the password, ends every other session, signs in).
+  Signed in: `GET /me`, `POST /profiles/bootstrap`, `POST /me/identifiers`,
+  `POST /me/identifiers/confirm`.
+- Every code response carries a `verificationId` that the app sends back with the
+  code, so the app never needs the full identifier on the code screen (SMS-to-e-mail
+  fallback, reset).
+- Errors are problem details with a stable `code` the app translates into French:
+  `identifier_required`, `invalid_phone`, `invalid_email`, `name_required`,
+  `weak_password`, `phone_taken`, `email_taken`, `invalid_credentials`,
+  `account_locked` (423), `account_not_verified` (403), `account_not_found`,
+  `already_verified`, `code_invalid`, `code_expired`, `code_attempts_exceeded`,
+  `code_rate_limited` (429 with `Retry-After`), `invalid_refresh_token`,
+  `invalid_reset_ticket`, `too_many_requests` (429, per IP or device).
+- Codes: 6 digits, HMAC-SHA256 with a server key (`Auth:CodeHashKey`), 10 minutes,
+  5 wrong attempts, a new code retires the previous one of the same purpose. Resend
+  delay 60 s per purpose; at most 5 codes per hour per phone or e-mail, all purposes
+  together (SMS-pumping guard). Reset tickets: 32 random bytes, 10 minutes, single use.
+- Sign-in needs the identifier used to be confirmed; otherwise `account_not_verified`
+  (after a correct password only). Unknown identifiers cost a full password hash.
+  Lockout: 5 failures, 15 minutes (Identity lockout, as on the board).
+- Sessions: ES256 access token, 15 minutes (`Auth:SigningKeyPem`, private key; its
+  public part validates). Refresh token: 32 random bytes, stored as SHA-256, 30 days,
+  rotated on each use; reusing an old one revokes its whole family. Two simultaneous
+  refreshes with the same token count as reuse, so the app must serialize refreshes.
+- Rate limits on `/auth`: 30 requests per minute per IP and per `X-Device-Id` header
+  (`RateLimiting:AuthPermitsPerMinute`). Behind Caddy on the VPS, the forwarded-headers
+  middleware must be configured so the limit sees the client IP, not the proxy's.
+- Messaging: `ISmsSender` and `IEmailSender` ports; until providers are chosen, the
+  in-memory development sender keeps messages (never logged) and lists them at
+  `GET /dev/messages` in Development. Startup fails outside Development and Testing
+  until `Messaging:Provider` names a real provider.
+- Identity: `IdentityUserContext<AppUser, Guid>` (no roles), tables `users`,
+  `user_claims`, `user_logins`, `user_tokens` in schema `app`; unique partial indexes
+  on the phone (E.164) and the normalized e-mail. Names are stored on the user at
+  sign-up; `POST /profiles/bootstrap` uses them when it receives no names.
 
 Check the current Microsoft Learn docs for ASP.NET Core Identity on .NET 10, and the
 Expo and Google docs for native Google sign-in, before choosing libraries.

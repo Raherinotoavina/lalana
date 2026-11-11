@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetMeData, GetMeErrors, GetMeResponses } from './types.gen';
+import type { BootstrapProfileData, BootstrapProfileErrors, BootstrapProfileResponses, ConfirmCodeData, ConfirmCodeResponses, ConfirmIdentifierChangeData, ConfirmIdentifierChangeErrors, ConfirmIdentifierChangeResponses, ForgotPasswordData, ForgotPasswordResponses, GetMeData, GetMeErrors, GetMeResponses, RefreshSessionData, RefreshSessionResponses, RequestIdentifierChangeData, RequestIdentifierChangeErrors, RequestIdentifierChangeResponses, ResetPasswordData, ResetPasswordResponses, SendConfirmationCodeData, SendConfirmationCodeResponses, SignInData, SignInResponses, SignOutData, SignOutResponses, SignUpData, SignUpResponses, VerifyResetCodeData, VerifyResetCodeResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -25,4 +25,151 @@ export const getMe = <ThrowOnError extends boolean = false>(options?: Options<Ge
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/me',
     ...options
+});
+
+/**
+ * Creates the caller's profile once; later calls return the same profile.
+ */
+export const bootstrapProfile = <ThrowOnError extends boolean = false>(options: Options<BootstrapProfileData, ThrowOnError>): RequestResult<BootstrapProfileResponses, BootstrapProfileErrors, ThrowOnError> => (options.client ?? client).post<BootstrapProfileResponses, BootstrapProfileErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/profiles/bootstrap',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Sends a code to a phone or e-mail to add to the account or to replace the current one.
+ */
+export const requestIdentifierChange = <ThrowOnError extends boolean = false>(options: Options<RequestIdentifierChangeData, ThrowOnError>): RequestResult<RequestIdentifierChangeResponses, RequestIdentifierChangeErrors, ThrowOnError> => (options.client ?? client).post<RequestIdentifierChangeResponses, RequestIdentifierChangeErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/me/identifiers',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Confirms the code and saves the new phone or e-mail.
+ */
+export const confirmIdentifierChange = <ThrowOnError extends boolean = false>(options: Options<ConfirmIdentifierChangeData, ThrowOnError>): RequestResult<ConfirmIdentifierChangeResponses, ConfirmIdentifierChangeErrors, ThrowOnError> => (options.client ?? client).post<ConfirmIdentifierChangeResponses, ConfirmIdentifierChangeErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/me/identifiers/confirm',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Creates an account and sends a confirmation code (SMS when a phone is given, else e-mail).
+ */
+export const signUp = <ThrowOnError extends boolean = false>(options: Options<SignUpData, ThrowOnError>): RequestResult<SignUpResponses, unknown, ThrowOnError> => (options.client ?? client).post<SignUpResponses, unknown, ThrowOnError>({
+    url: '/auth/sign-up',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Sends a new confirmation code for an unconfirmed phone or e-mail.
+ */
+export const sendConfirmationCode = <ThrowOnError extends boolean = false>(options: Options<SendConfirmationCodeData, ThrowOnError>): RequestResult<SendConfirmationCodeResponses, unknown, ThrowOnError> => (options.client ?? client).post<SendConfirmationCodeResponses, unknown, ThrowOnError>({
+    url: '/auth/codes',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Confirms the phone or e-mail the code was sent to and signs the member in.
+ */
+export const confirmCode = <ThrowOnError extends boolean = false>(options: Options<ConfirmCodeData, ThrowOnError>): RequestResult<ConfirmCodeResponses, unknown, ThrowOnError> => (options.client ?? client).post<ConfirmCodeResponses, unknown, ThrowOnError>({
+    url: '/auth/confirm',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Signs in with a confirmed phone or e-mail and the password.
+ */
+export const signIn = <ThrowOnError extends boolean = false>(options: Options<SignInData, ThrowOnError>): RequestResult<SignInResponses, unknown, ThrowOnError> => (options.client ?? client).post<SignInResponses, unknown, ThrowOnError>({
+    url: '/auth/sign-in',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Exchanges a refresh token for new tokens; an old token ends the session.
+ */
+export const refreshSession = <ThrowOnError extends boolean = false>(options: Options<RefreshSessionData, ThrowOnError>): RequestResult<RefreshSessionResponses, unknown, ThrowOnError> => (options.client ?? client).post<RefreshSessionResponses, unknown, ThrowOnError>({
+    url: '/auth/refresh',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Ends the session of this refresh token.
+ */
+export const signOut = <ThrowOnError extends boolean = false>(options: Options<SignOutData, ThrowOnError>): RequestResult<SignOutResponses, unknown, ThrowOnError> => (options.client ?? client).post<SignOutResponses, unknown, ThrowOnError>({
+    url: '/auth/sign-out',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Sends a reset code; the answer is the same whether or not an account exists.
+ */
+export const forgotPassword = <ThrowOnError extends boolean = false>(options: Options<ForgotPasswordData, ThrowOnError>): RequestResult<ForgotPasswordResponses, unknown, ThrowOnError> => (options.client ?? client).post<ForgotPasswordResponses, unknown, ThrowOnError>({
+    url: '/auth/password/forgot',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Checks the reset code and returns a ticket for the new password.
+ */
+export const verifyResetCode = <ThrowOnError extends boolean = false>(options: Options<VerifyResetCodeData, ThrowOnError>): RequestResult<VerifyResetCodeResponses, unknown, ThrowOnError> => (options.client ?? client).post<VerifyResetCodeResponses, unknown, ThrowOnError>({
+    url: '/auth/password/verify',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Sets the new password, ends the other sessions and signs the member in.
+ */
+export const resetPassword = <ThrowOnError extends boolean = false>(options: Options<ResetPasswordData, ThrowOnError>): RequestResult<ResetPasswordResponses, unknown, ThrowOnError> => (options.client ?? client).post<ResetPasswordResponses, unknown, ThrowOnError>({
+    url: '/auth/password/reset',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });
