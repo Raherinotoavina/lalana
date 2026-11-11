@@ -12,14 +12,25 @@ public sealed class MeTests(PostgisDatabase database)
     private CancellationToken Cancel => TestContext.Current.CancellationToken;
 
     [Fact]
-    public async Task Returns_the_callers_id_with_a_valid_token()
+    public async Task Returns_the_callers_account_with_a_valid_token()
     {
-        var userId = Guid.NewGuid();
-        var client = database.Api.CreateClient().WithBearer(TestTokens.Create(userId.ToString()));
+        var auth = new AuthApi(database.Api);
+        var email = AuthApi.NewEmail();
+        var (session, _, e164) = await auth.MemberAsync(email);
 
-        var me = await client.GetFromJsonAsync<MeResponse>("/me", Cancel);
+        var me = await auth.AuthorizedClient(session).GetFromJsonAsync<MeResponse>("/me", Cancel);
 
-        me.ShouldBe(new MeResponse(userId));
+        me.ShouldBe(new MeResponse(session.UserId, "Sitraka", "Rabe", e164, true, email, false, false));
+    }
+
+    [Fact]
+    public async Task Rejects_a_valid_token_for_an_account_that_does_not_exist()
+    {
+        var client = database.Api.CreateClient().WithBearer(TestTokens.Create(Guid.NewGuid().ToString()));
+
+        var response = await client.GetAsync("/me", Cancel);
+
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 
     [Fact]

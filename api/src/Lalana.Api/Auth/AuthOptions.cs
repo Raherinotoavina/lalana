@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Lalana.Api.Auth;
 
-/// <summary>Validation settings for the API's own access tokens (section <c>Auth</c>).</summary>
+/// <summary>Signing and hashing secrets of the API's own tokens and codes (section <c>Auth</c>).</summary>
 public sealed class AuthOptions
 {
     public const string Section = "Auth";
@@ -14,8 +14,16 @@ public sealed class AuthOptions
     public string Audience { get; set; } = string.Empty;
 
     /// <summary>
-    /// PEM of the ECDSA P-256 public key that verifies access tokens (ES256). Required outside
-    /// Development; in Development a throwaway key is generated when it is empty.
+    /// PEM of the ECDSA P-256 private key that signs access tokens (ES256); its public part
+    /// verifies them. Required outside Development, where a throwaway key is generated when empty.
     /// </summary>
-    public string? SigningPublicKeyPem { get; set; }
+    public string? SigningKeyPem { get; set; }
+
+    /// <summary>
+    /// Base64 key (32 bytes or more) of the HMAC that hashes one-time codes and reset tickets.
+    /// Required outside Development, where a throwaway key is generated when empty.
+    /// </summary>
+    public string? CodeHashKey { get; set; }
+
+    public TimeSpan AccessTokenLifetime { get; set; } = TimeSpan.FromMinutes(15);
 }
